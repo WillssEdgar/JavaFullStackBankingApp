@@ -1,0 +1,23 @@
+# spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
+# spring.jpa.hibernate.ddl-auto=none
+# spring.jpa.properties.hibernate.format_sql=true
+# spring.datasource.url=jdbc:postgresql://localhost:5431/wsebanking
+# spring.datasource.db.username=willsedgar
+# spring.datasource.password=2123
+
+# spring.sql.init.mode=always
+# spring.sql.init.schema-locations=classpath:/data.sql
+# spring.sql.init.continue-on-error=true
+
+security.jwt.token.secret-key: my-secret-key
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5431/wsebanking
+    username: willsedgar
+    password: 2123
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create
