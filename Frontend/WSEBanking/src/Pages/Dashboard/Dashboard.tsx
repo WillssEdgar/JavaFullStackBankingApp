@@ -1,14 +1,23 @@
-import { useNavigate } from "react-router-dom";
+// import { useEffect } from "react";
+// import { useNavigate } from "react-router-dom";
 
 interface DashboardProps {}
 
 const Dashboard: React.FC<DashboardProps> = () => {
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  if (!token) {
-    navigate("/login");
-    return null;
-  }
+  //const navigate = useNavigate();
+  // const token = localStorage.getItem("token");
+  // if (!token) {
+  //   navigate("/Login_Create");
+  //   return null;
+  // }
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("token");
+  //   if (!token) {
+  //     localStorage.remove("token");
+  //     navigate("/Login_Create");
+  //   }
+  // }, [navigate]);
 
   return (
     <div>

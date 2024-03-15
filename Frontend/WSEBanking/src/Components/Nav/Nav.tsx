@@ -1,17 +1,14 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+// import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Nav() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    () => !!localStorage.getItem("token")
-  );
-
+  const navigate = useNavigate();
+  const auth = localStorage.getItem("token");
   const handleLogout = () => {
     localStorage.removeItem("token");
-    setIsLoggedIn(false); // Update isLoggedIn state after logout
+    navigate("/Login_Create");
   };
 
-  // setIsLoggedIn(!!localStorage.getItem("token"));
   return (
     <div>
       <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary font-monospace">
@@ -45,7 +42,7 @@ function Nav() {
                 </Link>
               </li>
 
-              {isLoggedIn ? (
+              {auth ? (
                 <>
                   <li className="nav-item">
                     <Link

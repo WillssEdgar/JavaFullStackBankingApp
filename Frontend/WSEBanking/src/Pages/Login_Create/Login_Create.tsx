@@ -3,10 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./Login_Create.css";
 import axios, { AxiosResponse } from "axios";
 
-// interface AutheResponse {
-//   token: string;
-// }
-
 function Login_Create() {
   const navigate = useNavigate();
 
@@ -32,7 +28,6 @@ function Login_Create() {
 
       console.log("Login successful:", response.data);
       console.log("Token: ", token);
-
       navigate("/Dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
