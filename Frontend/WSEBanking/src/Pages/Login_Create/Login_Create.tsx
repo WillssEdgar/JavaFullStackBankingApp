@@ -24,8 +24,9 @@ function Login_Create() {
         password,
       });
       const token = response.data.token;
+      const id = response.data.id;
       localStorage.setItem("token", token);
-
+      localStorage.setItem("id", id);
       console.log("Login successful:", response.data);
       console.log("Token: ", token);
       navigate("/Dashboard");
