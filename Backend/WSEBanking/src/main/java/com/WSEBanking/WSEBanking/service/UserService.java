@@ -1,9 +1,14 @@
 package com.WSEBanking.WSEBanking.service;
 
 import java.nio.CharBuffer;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.WSEBanking.WSEBanking.api.model.Account;
 import com.WSEBanking.WSEBanking.api.model.Role;
+import com.WSEBanking.WSEBanking.mappers.AccountMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +32,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final AccountMapper accountMapper;
 
 
     public UserDto login(CredentialsDto credentialsDto) {
@@ -63,5 +69,13 @@ public class UserService {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         return userMapper.toUserDto(user);
+    }
+
+    public List<Map<String, String>> findAllAccountsByUserId(int userId){
+        List<Account> accounts = userRepository.findAccountsByUserId(userId);
+
+        return accounts.stream()
+                .map(account -> accountMapper.toMap(account))
+                .collect(Collectors.toList());
     }
 }

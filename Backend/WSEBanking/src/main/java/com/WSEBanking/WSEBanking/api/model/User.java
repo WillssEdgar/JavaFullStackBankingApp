@@ -3,19 +3,11 @@ package com.WSEBanking.WSEBanking.api.model;
 import java.util.Collection;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@ToString(exclude = "accounts")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,17 +34,20 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastname;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Account> accounts;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(name = "email")
-    public String email;
+    private String email;
 
     @Column(name = "username")
-    public String username;
+    private String username;
 
     @Column(name = "password")
-    public String password;
+    private String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
