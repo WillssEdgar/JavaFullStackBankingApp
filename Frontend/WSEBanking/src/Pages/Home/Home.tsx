@@ -5,13 +5,16 @@ import webBanking from "../../assets/webbanking.jpg";
 function Home() {
   return (
     <div>
-      <div className="container-fluid p-4" style={{ marginTop: "20%" }}>
+      <div
+        className="container-fluid p-4 d-flex justify-content-center"
+        style={{ marginTop: "10%" }}
+      >
         <div className="row">
           <div className="col">
             <div
               id="carouselExampleFade"
               className="carousel slide carousel-fade"
-              style={{ maxHeight: "500px" }}
+              style={{ maxHeight: "500px", maxWidth: "800px" }}
             >
               <div className="carousel-inner">
                 <div className="carousel-item active">

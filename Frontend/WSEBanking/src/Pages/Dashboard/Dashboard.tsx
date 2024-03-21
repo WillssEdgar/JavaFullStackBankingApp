@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -12,11 +12,15 @@ interface Account {
 const Dashboard: React.FC = () => {
   const [newAccountName, setNewAccountName] = useState("");
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [showTransferMenu, setShowTransferMenu] = useState(false);
   const [selectedAccountType, setSelectedAccountType] = useState("default");
   const [accounts, setAccounts] = useState<Account[]>([]);
   const token = localStorage.getItem("token");
   const accNum = localStorage.getItem("accountNumber");
-  const usaid = localStorage.getItem("id");
+  const usaid = parseInt(localStorage.getItem("id") || "0", 10);
+  const [selectedFromAccount, setSelectedFromAccount] = useState("");
+  const [selectedToAccount, setSelectedToAccount] = useState("");
+  const [amount, setAmount] = useState("");
 
   console.log("this is the account number in local storage right now", accNum);
   console.log("this is the user id in local storage right now", usaid);
@@ -64,15 +68,76 @@ const Dashboard: React.FC = () => {
     console.log("After toggle:", showAccountMenu); // Log the updated state
   };
 
-  const handleAddAccount = () => {
-    // Logic for adding a new account
+  const handleAddAccount = async () => {
+    try {
+      const response: AxiosResponse<{ token: string }> = await axios.post(
+        "http://localhost:8080/addAccount",
+        {
+          accountName: newAccountName,
+          accountType: selectedAccountType,
+          userId: usaid,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Registration failed:", error.response?.data);
+      } else {
+        console.error(
+          "An unexpected error occurred during registration:",
+          error
+        );
+      }
+    }
+  };
+  const handleTransferMenuClick = () => {
+    console.log("Before toggle:", showTransferMenu); // Log the current state
+    setShowTransferMenu((prev) => !prev);
+    console.log("After toggle:", showTransferMenu); // Log the updated state
+  };
+  const handleTransferMoney = async () => {
+    try {
+      const response: AxiosResponse<{ token: string }> = await axios.post(
+        "http://localhost:8080/transfer",
+        {
+          fromAccount: selectedFromAccount,
+          toAccount: selectedToAccount,
+          amount: amount,
+          userId: usaid,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Transfer failed:", error.response?.data);
+      } else {
+        console.error(
+          "An unexpected error occurred during registration:",
+          error
+        );
+      }
+    }
+    // Reset form fields after transfer
+    setSelectedFromAccount("");
+    setSelectedToAccount("");
+    setAmount("");
   };
 
   return (
     <div className="container d-flex align-items-center justify-content-center vh-100">
       <div className="row justify-content-evenly">
         <div className="col-8 m-5 text-center">
-          <div className="container rounded-4 mt-5 bg-light-subtle p-4">
+          <div className="container rounded-4 mt-5 bg-light-subtle p-3">
             <h3 className="mb-4 text-light">Accounts</h3>
             <div className="row justify-content-evenly">
               {accounts.map((account) => (
@@ -133,8 +198,8 @@ const Dashboard: React.FC = () => {
                     type="radio"
                     name="accountType"
                     id="checkingRadio"
-                    value="checking"
-                    checked={selectedAccountType === "checking"}
+                    value="CHECKINGS"
+                    checked={selectedAccountType === "CHECKINGS"}
                     onChange={(e) => setSelectedAccountType(e.target.value)}
                   />
                   <label className="form-check-label" htmlFor="checkingRadio">
@@ -147,8 +212,8 @@ const Dashboard: React.FC = () => {
                     type="radio"
                     name="accountType"
                     id="savingsRadio"
-                    value="savings"
-                    checked={selectedAccountType === "savings"}
+                    value="SAVINGS"
+                    checked={selectedAccountType === "SAVINGS"}
                     onChange={(e) => setSelectedAccountType(e.target.value)}
                   />
                   <label className="form-check-label" htmlFor="savingsRadio">
@@ -164,9 +229,66 @@ const Dashboard: React.FC = () => {
                 </button>
               </div>
             )}
-            <button type="button" className="btn btn-primary btn-lg m-3">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg m-3"
+              onClick={handleTransferMenuClick}
+            >
               Transfer Money
             </button>
+            {showTransferMenu && (
+              <div className="card p-3">
+                <div className="form-group">
+                  <label htmlFor="fromAccount">From Account:</label>
+                  <select
+                    className="form-control"
+                    id="fromAccount"
+                    value={selectedFromAccount}
+                    onChange={(e) => setSelectedFromAccount(e.target.value)}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map((account) => (
+                      <option key={account.id} value={account.accountNumber}>
+                        {account.accountName} - {account.accountNumber}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="toAccount">To Account:</label>
+                  <select
+                    className="form-control"
+                    id="toAccount"
+                    value={selectedToAccount}
+                    onChange={(e) => setSelectedToAccount(e.target.value)}
+                  >
+                    <option value="">Select Account</option>
+                    {accounts.map((account) => (
+                      <option key={account.id} value={account.accountNumber}>
+                        {account.accountName} - {account.accountNumber}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="amount">Amount:</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg"
+                  onClick={handleTransferMoney}
+                >
+                  Transfer Money
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
