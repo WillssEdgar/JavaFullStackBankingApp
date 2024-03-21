@@ -1,41 +1,36 @@
-// package com.WSEBanking.WSEBanking.api.controller;
+ package com.WSEBanking.WSEBanking.api.controller;
 
-// import org.slf4j.Logger;
-// import org.slf4j.LoggerFactory;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.CrossOrigin;
-// //import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.PostMapping;
-// import org.springframework.web.bind.annotation.RequestBody;
-// //import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RestController;
+ import com.WSEBanking.WSEBanking.api.DTOs.UserDto;
+ import com.WSEBanking.WSEBanking.api.model.Account;
+ import com.WSEBanking.WSEBanking.config.UserAuthenticationProvider;
+ import com.WSEBanking.WSEBanking.service.UserService;
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.http.ResponseEntity;
+ import org.springframework.web.bind.annotation.*;
+ //import org.springframework.web.bind.annotation.GetMapping;
+ //import org.springframework.web.bind.annotation.RequestParam;
 
-// import java.util.Map;
+ import java.util.*;
 
-// @RestController
-// @CrossOrigin(origins = "http://localhost:5173")
-// public class UserController {
+ @RestController
+ public class UserController {
 
-// // @GetMapping("/user")
-// // public User getUser(@RequestParam Integer id) {
-// // User user = userService.getUser(id);
-// // return user;
-// // }
+     @Autowired
+     private UserService userService;
+     UserDto userDto;
+     UserAuthenticationProvider userAuthenticationProvider;
 
-// private static final Logger logger =
-// LoggerFactory.getLogger(UserController.class);
+     @GetMapping("/users/accounts")
+     public ResponseEntity<List<Map<String, String>>> findAllAccountsByUserId(@RequestParam("userId") int userId){
+         List<Map<String, String>> accounts = userService.findAllAccountsByUserId(userId);
+         return ResponseEntity.ok(accounts);
+     }
 
-// @PostMapping("/api/auth/login")
-// public ResponseEntity<String> loginUser(@RequestBody Map<String, String>
-// loginRequest) {
-// String email = loginRequest.get("email");
-// String password = loginRequest.get("password");
+     @GetMapping("/messages")
+     public ResponseEntity<List<String>> messages() {
+         return ResponseEntity.ok(Arrays.asList("first", "Second"));
+     }
 
-// // Log the received data
-// logger.info("Received login request. Email: {}, Password: {}", email,
-// password);
-
-// return ResponseEntity.ok("Login sucessful");
-// }
-
-// }
+ }
