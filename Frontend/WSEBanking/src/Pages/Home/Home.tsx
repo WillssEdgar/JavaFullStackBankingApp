@@ -5,33 +5,37 @@ import webBanking from "../../assets/webbanking.jpg";
 function Home() {
   return (
     <div>
-      <div className="container d-flex align-items-center justify-content-center vh-100">
+      <div className="container-fluid p-4" style={{ marginTop: "20%" }}>
         <div className="row">
           <div className="col">
             <div
               id="carouselExampleFade"
               className="carousel slide carousel-fade"
+              style={{ maxHeight: "500px" }}
             >
               <div className="carousel-inner">
                 <div className="carousel-item active">
                   <img
                     src={onlinebanking}
-                    className="d-block w-100 rounded-4"
-                    alt="..."
+                    className="img-fluid d-block w-100 rounded-4"
+                    style={{ maxHeight: "500px" }}
+                    alt="Online Banking"
                   />
                 </div>
                 <div className="carousel-item">
                   <img
                     src={twoBankers}
-                    className="d-block w-100 rounded-4"
-                    alt="..."
+                    className="img-fluid d-block w-100 rounded-4"
+                    style={{ maxHeight: "500px" }}
+                    alt="Two Bankers"
                   />
                 </div>
                 <div className="carousel-item">
                   <img
                     src={webBanking}
-                    className="d-block w-100 rounded-4"
-                    alt="..."
+                    className="img-fluid d-block w-100 rounded-4"
+                    style={{ maxHeight: "500px" }}
+                    alt="Web Banking"
                   />
                 </div>
               </div>
@@ -63,12 +67,30 @@ function Home() {
           </div>
         </div>
       </div>
-      <div className="container d-flex align-items-center justify-content-center vh-30  mb-5">
-        <div className="row justify-content-evenly ">
-          <h1>What can we help you with?</h1>
-          <div className="col bg-primary"> hello world</div>
 
-          <div className="col bg-success"> hello world</div>
+      <div className="container mt-5 mb-5">
+        <div className="row justify-content-center text-center">
+          <div className="col-md-6 mb-4">
+            <h2>What can we help you with?</h2>
+          </div>
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-md-5 mx-3 bg-light-subtle rounded p-4">
+            <h3 className="text-white">Explore Our Services</h3>
+            <p className="text-white">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
+              nisi vel ipsum dignissim lobortis.
+            </p>
+            <button className="btn btn-light">Learn More</button>
+          </div>
+          <div className="col-md-5 mx-3 bg-light-subtle rounded p-4">
+            <h3 className="text-white">Get Started with Online Banking</h3>
+            <p className="text-white">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
+              nisi vel ipsum dignissim lobortis.
+            </p>
+            <button className="btn btn-light">Sign Up Now</button>
+          </div>
         </div>
       </div>
     </div>
