@@ -16,7 +16,7 @@ function Account() {
   const [account, setAccount] = useState<Account | null>(null);
   const token = localStorage.getItem("token");
   const userId = localStorage.getItem("user_id");
-
+  const accountId = localStorage.getItem("id");
   const accountNumber = localStorage.getItem("accountNumber");
 
   console.log("this is the account number in local storage right now", userId);
@@ -52,10 +52,26 @@ function Account() {
     setShowWithdrawalMenu((prev) => !prev);
   };
 
-  const handleWithdrawalConfirm = () => {
-    console.log("Withdrawal amount:", withdrawalAmount);
-    setShowWithdrawalMenu(false);
-    setWithdrawalAmount("");
+  const handleWithdrawalConfirm = async () => {
+    console.log("this is the userID", userId);
+    console.log("this is the token", token);
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/withdrawal?accountId=${accountId}&withdrawalAmount=${withdrawalAmount}`,
+        null, // pass null as the second argument since you're not sending any data in the request body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(response.data);
+      setShowWithdrawalMenu(false);
+      setWithdrawalAmount("");
+    } catch (error) {
+      console.error("Error withdrawaling funds: ", error);
+      // Handle error (e.g., display error message to the user)
+    }
   };
 
   const handleDepositClick = () => {
@@ -65,15 +81,15 @@ function Account() {
     console.log("this is the userID", userId);
     console.log("this is the token", token);
     try {
-      const response = await axios.post("http://localhost:8080/deposit", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId,
-          depositAmount: depositAmount,
-        },
-      });
+      const response = await axios.post(
+        `http://localhost:8080/deposit?accountId=${accountId}&depositAmount=${depositAmount}`,
+        null, // pass null as the second argument since you're not sending any data in the request body
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       console.log(response.data);
       setShowDepositMenu(false);
       setDepositAmount("");
