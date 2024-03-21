@@ -1,23 +1,152 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+interface Account {
+  id: string;
+  accountName: string;
+  accountNumber: string;
+}
+
 function Account() {
+  const [withdrawalAmount, setWithdrawalAmount] = useState("");
+  const [showWithdrawalMenu, setShowWithdrawalMenu] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+
+  const [showDepositMenu, setShowDepositMenu] = useState(false);
+
+  const [account, setAccount] = useState<Account | null>(null);
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("user_id");
+
+  const accountNumber = localStorage.getItem("accountNumber");
+
+  console.log("this is the account number in local storage right now", userId);
+  console.log("this is the user id in local storage right now", accountNumber);
+
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/accounts/account`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              accountNumber: accountNumber,
+              userId: userId,
+            },
+          }
+        );
+        console.log(response.data);
+        setAccount(response.data);
+      } catch (error) {
+        console.error("Error fetching accounts: ", error);
+      }
+    };
+    if (token && userId) {
+      fetchAccounts();
+    }
+  }, [token, userId]);
+
+  const handWithdrawalClick = () => {
+    setShowWithdrawalMenu((prev) => !prev);
+  };
+
+  const handleWithdrawalConfirm = () => {
+    console.log("Withdrawal amount:", withdrawalAmount);
+    setShowWithdrawalMenu(false);
+    setWithdrawalAmount("");
+  };
+
+  const handleDepositClick = () => {
+    setShowDepositMenu((prev) => !prev);
+  };
+  const handleDepositConfirm = async () => {
+    console.log("this is the userID", userId);
+    console.log("this is the token", token);
+    try {
+      const response = await axios.post("http://localhost:8080/deposit", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          userId: userId,
+          depositAmount: depositAmount,
+        },
+      });
+      console.log(response.data);
+      setShowDepositMenu(false);
+      setDepositAmount("");
+    } catch (error) {
+      console.error("Error depositing funds: ", error);
+      // Handle error (e.g., display error message to the user)
+    }
+  };
+
   return (
-    <div>
-      <div className="container d-flex align-items-center justify-content-center vh-100">
-        <div className="row justify-content-center">
-          <div className="col bg-light-subtle p-5 rounded-4 text-center">
-            <h3>Actions: </h3>
-            <div className="d-grid gap-2 d-md-block">
-              <button type="button" className="btn btn-primary btn-lg m-3">
+    <div className="container " style={{ marginTop: "20%" }}>
+      <div className="row justify-content-center">
+        {account ? (
+          <div className="col-md-6">
+            <h3>Account Number: {account.accountNumber}</h3>
+            <div className="card p-3">
+              <h3 className="mb-3">Actions</h3>
+              <button
+                type="button"
+                className="btn btn-primary btn-lg mb-3"
+                onClick={handWithdrawalClick}
+              >
                 Withdrawal
               </button>
-              <button type="button" className="btn btn-primary btn-lg m-3">
+              {showWithdrawalMenu && (
+                <div className="mb-3">
+                  <input
+                    type="number"
+                    value={withdrawalAmount}
+                    onChange={(e) => setWithdrawalAmount(e.target.value)}
+                    placeholder="Enter Withdrawal Amount"
+                    className="form-control mb-2"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleWithdrawalConfirm}
+                  >
+                    Confirm Withdrawal
+                  </button>
+                </div>
+              )}
+
+              <button
+                type="button"
+                className="btn btn-primary btn-lg mb-3"
+                onClick={handleDepositClick}
+              >
                 Deposit
               </button>
-              <button type="button" className="btn btn-primary btn-lg m-3">
-                Add Account
-              </button>
+              {showDepositMenu && (
+                <div className="mb-3">
+                  <input
+                    type="number"
+                    value={depositAmount}
+                    onChange={(e) => setDepositAmount(e.target.value)}
+                    placeholder="Enter Deposit Amount"
+                    className="form-control mb-2"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={handleDepositConfirm}
+                  >
+                    Confirm Deposit
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        </div>
+        ) : (
+          <h3>Loading Content...</h3>
+        )}
       </div>
     </div>
   );
