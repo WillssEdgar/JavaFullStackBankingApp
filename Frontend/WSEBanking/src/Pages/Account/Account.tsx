@@ -37,7 +37,7 @@ function Account() {
             },
           }
         );
-        console.log(response.data);
+
         setAccount(response.data);
       } catch (error) {
         console.error("Error fetching accounts: ", error);
@@ -53,12 +53,13 @@ function Account() {
   };
 
   const handleWithdrawalConfirm = async () => {
-    console.log("this is the userID", userId);
-    console.log("this is the token", token);
     try {
       const response = await axios.post(
-        `http://localhost:8080/withdrawal?accountId=${accountId}&withdrawalAmount=${withdrawalAmount}`,
-        null, // pass null as the second argument since you're not sending any data in the request body
+        "http://localhost:8080/accounts/transactions/withdrawal",
+        {
+          accountId: accountId,
+          amount: withdrawalAmount,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -82,8 +83,11 @@ function Account() {
     console.log("this is the token", token);
     try {
       const response = await axios.post(
-        `http://localhost:8080/deposit?accountId=${accountId}&depositAmount=${depositAmount}`,
-        null, // pass null as the second argument since you're not sending any data in the request body
+        "http://localhost:8080/accounts/transactions/deposit",
+        {
+          accountId: accountId,
+          amount: depositAmount,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,

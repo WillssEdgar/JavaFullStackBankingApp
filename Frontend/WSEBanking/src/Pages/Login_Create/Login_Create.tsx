@@ -1,10 +1,12 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login_Create.css";
 import axios, { AxiosResponse } from "axios";
 
 function Login_Create() {
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState("");
+  const [registrationError, setRegistrationError] = useState("");
 
   const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,6 +20,15 @@ function Login_Create() {
     const email = emailInput.value;
     const password = passwordInput.value;
 
+    if (!email) {
+      setLoginError("Email is required.");
+      return;
+    }
+    if (!password) {
+      setLoginError("Password is required.");
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:8080/login", {
         email,
@@ -25,12 +36,10 @@ function Login_Create() {
       });
       const token = response.data.token;
       const id = response.data.id;
-
       localStorage.setItem("token", token);
       localStorage.setItem("user_id", id);
 
       console.log("Login successful:", response.data);
-      console.log("Token: ", token);
       navigate("/Dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -67,6 +76,9 @@ function Login_Create() {
     const email = emailInput.value;
     const password = passwordInput.value;
 
+    if (!firstName.trim()) {
+    }
+
     try {
       const response: AxiosResponse<{ token: string }> = await axios.post(
         "http://localhost:8080/register",
@@ -81,7 +93,6 @@ function Login_Create() {
       const token = response.data.token;
       localStorage.setItem("token", token);
 
-      console.log("Registration successful:", response.data);
       navigate("/Dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -116,6 +127,7 @@ function Login_Create() {
                   aria-describedby="emailHelp"
                   name="email"
                 />
+                {loginError && <p className="text-danger">{loginError}</p>}
                 <div id="emailHelp" className="form-text">
                   We'll never share your email with anyone else.
                 </div>
@@ -130,6 +142,7 @@ function Login_Create() {
                   id="exampleInputPassword1"
                   name="password"
                 />
+                {loginError && <p className="text-danger">{loginError}</p>}
               </div>
               <button type="submit" className="btn btn-primary">
                 Submit
