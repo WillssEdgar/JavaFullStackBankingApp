@@ -6,6 +6,7 @@ function Nav() {
   const auth = localStorage.getItem("token");
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.clear;
     navigate("/Login_Create");
   };
 

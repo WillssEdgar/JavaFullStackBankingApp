@@ -92,6 +92,7 @@ const Dashboard: React.FC = () => {
         }
       );
       setAccountNameError("");
+      window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Registration failed:", error.response?.data);
@@ -141,6 +142,7 @@ const Dashboard: React.FC = () => {
         }
       );
       setTransferError("");
+      window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Transfer failed:", error.response?.data);
@@ -210,25 +212,29 @@ const Dashboard: React.FC = () => {
             </button>
             {showAccountMenu && (
               <div className="card p-3">
-                <h4 className="mb-3">Add Account</h4>
-                <label htmlFor="accountName" className="form-label">
-                  Account Name
-                </label>
-                <input
-                  type="text"
-                  id="accountName"
-                  value={newAccountName}
-                  onChange={(e: { target: { value: any } }) =>
-                    setNewAccountName(e.target.value)
-                  }
-                  placeholder="Enter Name"
-                  className="form-control mb-3"
-                />
-                {accountNameError && (
-                  <p className="text-danger">{accountNameError}</p>
-                )}
-                <div className="form-check mb-3">
-                  <h5 className="mb-3">Account Type:</h5>
+                <div className="form-floating m-3">
+                  <input
+                    type="text"
+                    id="accountName"
+                    value={newAccountName}
+                    onChange={(e) => setNewAccountName(e.target.value)}
+                    className={`form-control ${
+                      accountNameError ? "is-invalid" : ""
+                    }`}
+                    placeholder=" "
+                    required
+                  />
+                  <label htmlFor="accountName">Account Name</label>
+                  {accountNameError && (
+                    <div className="invalid-feedback">{accountNameError}</div>
+                  )}
+                </div>
+                <div className="row justify-content-start m-3">
+                  <div className="col" style={{ textAlign: "left" }}>
+                    <h5 className="mb-3">Account Type:</h5>
+                  </div>
+                </div>
+                <div className="form-check m-3">
                   <input
                     className="form-check-input"
                     type="radio"
@@ -245,7 +251,7 @@ const Dashboard: React.FC = () => {
                     Checking Account
                   </label>
                 </div>
-                <div className="form-check mb-3">
+                <div className="form-check m-3">
                   <input
                     className="form-check-input"
                     type="radio"
@@ -283,10 +289,9 @@ const Dashboard: React.FC = () => {
             </button>
             {showTransferMenu && (
               <div className="card p-3">
-                <div className="form-group">
-                  <label htmlFor="fromAccount">From Account:</label>
+                <div className="form-floating m-3">
                   <select
-                    className="form-control"
+                    className="form-select"
                     id="fromAccount"
                     value={selectedFromAccount}
                     onChange={(e: { target: { value: any } }) =>
@@ -306,13 +311,14 @@ const Dashboard: React.FC = () => {
                       )
                     )}
                   </select>
+                  <label htmlFor="fromAccount ">From Account:</label>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="toAccount">To Account:</label>
+                <div className="form-floating m-3">
                   <select
-                    className="form-control"
+                    className="form-select"
                     id="toAccount"
                     value={selectedToAccount}
+                    aria-label="Floating label select example"
                     onChange={(e: { target: { value: any } }) =>
                       setSelectedToAccount(e.target.value)
                     }
@@ -330,9 +336,9 @@ const Dashboard: React.FC = () => {
                       )
                     )}
                   </select>
+                  <label htmlFor="toAccount">To Account:</label>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="amount">Amount:</label>
+                <div className="form-floating m-3">
                   <input
                     type="text"
                     className="form-control"
@@ -342,13 +348,14 @@ const Dashboard: React.FC = () => {
                       setAmount(e.target.value)
                     }
                   />
+                  <label htmlFor="amount">Amount:</label>
                 </div>
                 {transferError && (
                   <p className="text-danger">{transferError}</p>
                 )}
                 <button
                   type="button"
-                  className="btn btn-primary btn-lg"
+                  className="btn btn-primary btn-lg mt-3"
                   onClick={handleTransferMoney}
                 >
                   Transfer Money
