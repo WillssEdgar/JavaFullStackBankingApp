@@ -1,47 +1,60 @@
 import axios, { AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
 
 interface Account {
   id: string;
   user_id: string;
   accountName: string;
   accountNumber: string;
+  balance: string;
 }
 
 const Dashboard: React.FC = () => {
-  const [newAccountName, setNewAccountName] = useState("");
-  const [accountNameError, setAccountNameError] = useState("");
-  const [accountTypeError, setAccountTypeError] = useState("");
+  const newAccountNameRef = useRef<HTMLInputElement>(null);
+  const checkingRadioRef = useRef<HTMLInputElement>(null);
+  const savingsRadioRef = useRef<HTMLInputElement>(null);
+  const selectedFromAccountRef = useRef<HTMLSelectElement>(null);
+  const selectedToAccountRef = useRef<HTMLSelectElement>(null);
+  const amountRef = useRef<HTMLInputElement>(null);
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [showTransferMenu, setShowTransferMenu] = useState(false);
-  const [selectedAccountType, setSelectedAccountType] = useState("default");
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const token = localStorage.getItem("token");
-  const accNum = localStorage.getItem("accountNumber");
-  const usaid = parseInt(localStorage.getItem("user_id") || "0", 10);
-  const [selectedFromAccount, setSelectedFromAccount] = useState("");
-  const [selectedToAccount, setSelectedToAccount] = useState("");
-  const [amount, setAmount] = useState("");
-  const [transferError, setTransferError] = useState("");
 
-  if (accNum) {
-    localStorage.removeItem("accountNumber");
-  }
+  const location = useLocation();
+  const user_Id = parseInt(location.state.user_Id);
+  const token = location.state.token;
+
+  console.log("Location from Dashboard", location.state);
+
+  const [addAccountErrors, setAddAccountErrors] = useState<{
+    [key: string]: string;
+  }>({});
+  const [transferErrors, setTransferErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const checkingRadioSelected = checkingRadioRef.current?.checked;
+  const savingsRadioSelected = savingsRadioRef.current?.checked;
+  const selectedAccountTypeRef = checkingRadioSelected
+    ? checkingRadioRef
+    : savingsRadioSelected
+    ? savingsRadioRef
+    : null;
+
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const userId = localStorage.getItem("user_id");
         const response = await axios.get(
           `http://localhost:8080/users/accounts`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-            params: { userId: userId },
+            params: { userId: user_Id },
           }
         );
-
+        console.log("response data ", response.data);
         setAccounts(response.data);
       } catch (error) {
         console.error("Error fetching accounts: ", error);
@@ -54,13 +67,20 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const handleAccountClick = (
     accountId: string,
+    userId: string,
     accountNumber: string,
     accountName: string
   ) => {
-    localStorage.setItem("id", accountId);
-    localStorage.setItem("accountNumber", accountNumber);
-    localStorage.setItem("accountName", accountName);
-    navigate("/Account");
+    const token = location.state.token;
+    navigate("/Account", {
+      state: {
+        id: accountId,
+        user_Id: userId,
+        accountNumber: accountNumber,
+        accountName: accountName,
+        token: token,
+      },
+    });
   };
 
   const handleAccountMenuClick = () => {
@@ -68,12 +88,19 @@ const Dashboard: React.FC = () => {
   };
 
   const handleAddAccount = async () => {
-    if (!newAccountName.trim()) {
-      setAccountNameError("Account name is required.");
-      return;
+    const newAccountName = newAccountNameRef.current?.value;
+    const selectedAccountType =
+      selectedAccountTypeRef?.current?.value || "default";
+    const errors: { [key: string]: string } = {};
+
+    if (!newAccountName || !newAccountName.trim()) {
+      errors.newAccountName = "Account name is required.";
     }
     if (selectedAccountType == "default") {
-      setAccountTypeError("Account type is required.");
+      errors.selectedAccountType = "Account type is required.";
+    }
+    if (Object.keys(errors).length > 0) {
+      setAddAccountErrors(errors);
       return;
     }
 
@@ -83,7 +110,7 @@ const Dashboard: React.FC = () => {
         {
           accountName: newAccountName,
           accountType: selectedAccountType,
-          userId: usaid,
+          userId: user_Id,
         },
         {
           headers: {
@@ -91,7 +118,7 @@ const Dashboard: React.FC = () => {
           },
         }
       );
-      setAccountNameError("");
+
       window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -110,19 +137,26 @@ const Dashboard: React.FC = () => {
     console.log("After toggle:", showTransferMenu); // Log the updated state
   };
   const handleTransferMoney = async () => {
+    const selectedFromAccount = selectedFromAccountRef.current?.value;
+    const selectedToAccount = selectedToAccountRef.current?.value;
+    const amount = amountRef.current?.value;
+
+    const errors: { [key: string]: string } = {};
+
     if (!selectedFromAccount) {
-      setTransferError("Please select a 'From' Account.");
-      return;
+      errors.selectedFromAccount = "Please select a 'From' Account.";
     }
 
     if (!selectedToAccount) {
-      setTransferError("Please select a 'To' Account.");
-      return;
+      errors.selectedToAccount = "Please select a 'To' Account.";
     }
 
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      setTransferError("Please enter a valid positive amount.");
+    if (!amount) {
+      errors.amount = "Please enter a valid positive amount.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setTransferErrors(errors);
       return;
     }
 
@@ -133,7 +167,7 @@ const Dashboard: React.FC = () => {
           fromAccount: selectedFromAccount,
           toAccount: selectedToAccount,
           amount: amount,
-          userId: usaid,
+          userId: user_Id,
         },
         {
           headers: {
@@ -141,7 +175,7 @@ const Dashboard: React.FC = () => {
           },
         }
       );
-      setTransferError("");
+
       window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -153,17 +187,16 @@ const Dashboard: React.FC = () => {
         );
       }
     }
-    // Reset form fields after transfer
-    setSelectedFromAccount("");
-    setSelectedToAccount("");
-    setAmount("");
   };
 
   return (
-    <div className="container d-flex align-items-center justify-content-center vh-100">
+    <div
+      className="container d-flex align-items-center justify-content-center "
+      style={{ marginTop: "10%", marginBottom: "10%" }}
+    >
       <div className="row justify-content-evenly">
-        <div className="col-8 m-5 text-center">
-          <div className="container rounded-4 mt-5 bg-light-subtle p-3">
+        <div className="col-12 m-5 text-center">
+          <div className="container rounded-4 bg-light-subtle p-3">
             <h3 className="mb-4 text-light">Accounts</h3>
             <div className="row justify-content-evenly">
               {accounts.map(
@@ -171,13 +204,15 @@ const Dashboard: React.FC = () => {
                   id: string;
                   accountName: string;
                   accountNumber: string;
+                  balance: string;
                 }) => (
                   <div className="col-12 col-md-6" key={account.id}>
                     <div className="card mb-3">
                       <div className="card-body">
                         <h5 className="card-title">{account.accountName}</h5>
                         <p className="card-text">
-                          Account Number: {account.accountNumber}
+                          Account Number: {account.accountNumber} <br />
+                          Balance: ${parseFloat(account.balance).toFixed(2)}
                         </p>
                         <button
                           type="button"
@@ -185,6 +220,7 @@ const Dashboard: React.FC = () => {
                           onClick={() =>
                             handleAccountClick(
                               account.id,
+                              user_Id.toString(),
                               account.accountNumber,
                               account.accountName
                             )
@@ -200,80 +236,73 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="col-8 p-4 rounded-4 bg-light-subtle text-center">
+        <div className="col-12 p-4 rounded-4 bg-light-subtle text-center">
           <h3 className="text-light">Actions</h3>
-          <div className="d-grid gap-2 d-md-block mt-4">
+          <div className="d-grid gap-3 d-md-block m-4">
             <button
               type="button"
-              className="btn btn-primary btn-lg m-3"
+              className="btn btn-primary btn-lg "
               onClick={handleAccountMenuClick}
+              style={{ width: "100%" }}
             >
               Add Account
             </button>
             {showAccountMenu && (
               <div className="card p-3">
-                <div className="form-floating m-3">
+                <div className="form-floating mb-2">
                   <input
                     type="text"
+                    ref={newAccountNameRef}
                     id="accountName"
-                    value={newAccountName}
-                    onChange={(e) => setNewAccountName(e.target.value)}
-                    className={`form-control ${
-                      accountNameError ? "is-invalid" : ""
-                    }`}
-                    placeholder=" "
+                    className={"form-control"}
                     required
                   />
                   <label htmlFor="accountName">Account Name</label>
-                  {accountNameError && (
-                    <div className="invalid-feedback">{accountNameError}</div>
+                  {addAccountErrors.newAccountName && (
+                    <p className="text-danger">
+                      {addAccountErrors.newAccountName}
+                    </p>
                   )}
                 </div>
-                <div className="row justify-content-start m-3">
+                <div className="row justify-content-start m-2">
                   <div className="col" style={{ textAlign: "left" }}>
                     <h5 className="mb-3">Account Type:</h5>
                   </div>
                 </div>
-                <div className="form-check m-3">
+                <div className="form-check m-1">
                   <input
                     className="form-check-input"
+                    ref={checkingRadioRef}
                     type="radio"
                     name="accountType"
                     id="checkingRadio"
                     value="CHECKINGS"
-                    checked={selectedAccountType === "CHECKINGS"}
-                    onChange={(e: { target: { value: any } }) => {
-                      setSelectedAccountType(e.target.value);
-                      setAccountTypeError("");
-                    }}
                   />
                   <label className="form-check-label" htmlFor="checkingRadio">
                     Checking Account
                   </label>
                 </div>
-                <div className="form-check m-3">
+                <div className="form-check m-1">
                   <input
                     className="form-check-input"
+                    ref={savingsRadioRef}
                     type="radio"
                     name="accountType"
                     id="savingsRadio"
                     value="SAVINGS"
-                    checked={selectedAccountType === "SAVINGS"}
-                    onChange={(e: { target: { value: any } }) => {
-                      setSelectedAccountType(e.target.value);
-                      setAccountTypeError("");
-                    }}
                   />
                   <label className="form-check-label" htmlFor="savingsRadio">
                     Savings Account
                   </label>
                 </div>
-                {accountTypeError && (
-                  <p className="text-danger">{accountTypeError}</p>
+                {addAccountErrors.selectedAccountType && (
+                  <p className="text-danger">
+                    {addAccountErrors.selectedAccountType}
+                  </p>
                 )}
                 <button
                   type="button"
-                  className="btn btn-primary btn-lg"
+                  className="btn btn-primary btn-lg m-2"
                   onClick={handleAddAccount}
                 >
                   Confirm New Account
@@ -282,21 +311,19 @@ const Dashboard: React.FC = () => {
             )}
             <button
               type="button"
-              className="btn btn-primary btn-lg m-3"
+              className="btn btn-primary btn-lg mt-4"
               onClick={handleTransferMenuClick}
+              style={{ width: "100%" }}
             >
-              Transfer Money
+              Transfer
             </button>
             {showTransferMenu && (
               <div className="card p-3">
-                <div className="form-floating m-3">
+                <div className="form-floating m-1">
                   <select
                     className="form-select"
+                    ref={selectedFromAccountRef}
                     id="fromAccount"
-                    value={selectedFromAccount}
-                    onChange={(e: { target: { value: any } }) =>
-                      setSelectedFromAccount(e.target.value)
-                    }
                   >
                     <option value="">Select Account</option>
                     {accounts.map(
@@ -312,16 +339,17 @@ const Dashboard: React.FC = () => {
                     )}
                   </select>
                   <label htmlFor="fromAccount ">From Account:</label>
+                  {transferErrors.selectedFromAccount && (
+                    <p className="text-danger" style={{ fontSize: "12px" }}>
+                      {transferErrors.selectedFromAccount}
+                    </p>
+                  )}
                 </div>
-                <div className="form-floating m-3">
+                <div className="form-floating m-1">
                   <select
                     className="form-select"
+                    ref={selectedToAccountRef}
                     id="toAccount"
-                    value={selectedToAccount}
-                    aria-label="Floating label select example"
-                    onChange={(e: { target: { value: any } }) =>
-                      setSelectedToAccount(e.target.value)
-                    }
                   >
                     <option value="">Select Account</option>
                     {accounts.map(
@@ -337,22 +365,26 @@ const Dashboard: React.FC = () => {
                     )}
                   </select>
                   <label htmlFor="toAccount">To Account:</label>
+                  {transferErrors.selectedToAccount && (
+                    <p className="text-danger" style={{ fontSize: "12px" }}>
+                      {transferErrors.selectedToAccount}
+                    </p>
+                  )}
                 </div>
-                <div className="form-floating m-3">
+                <div className="form-floating m-1">
                   <input
                     type="text"
+                    ref={amountRef}
                     className="form-control"
                     id="amount"
-                    value={amount}
-                    onChange={(e: { target: { value: any } }) =>
-                      setAmount(e.target.value)
-                    }
                   />
                   <label htmlFor="amount">Amount:</label>
+                  {transferErrors.amount && (
+                    <p className="text-danger" style={{ fontSize: "12px" }}>
+                      {transferErrors.amount}
+                    </p>
+                  )}
                 </div>
-                {transferError && (
-                  <p className="text-danger">{transferError}</p>
-                )}
                 <button
                   type="button"
                   className="btn btn-primary btn-lg mt-3"

@@ -5,6 +5,7 @@ import axios, { AxiosResponse } from "axios";
 
 function Login_Create() {
   const navigate = useNavigate();
+
   const [loginErrors, setLoginErrors] = useState<{ [key: string]: string }>({});
   const [registrationErrors, setRegistrationErrors] = useState<{
     [key: string]: string;
@@ -50,11 +51,9 @@ function Login_Create() {
       });
       const token = response.data.token;
       const id = response.data.id;
-      localStorage.setItem("token", token);
-      localStorage.setItem("user_id", id);
 
       console.log("Login successful:", response.data);
-      navigate("/Dashboard");
+      navigate("/Dashboard", { state: { user_Id: id, token: token } });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Login failed:", error.response?.data);
