@@ -19,17 +19,11 @@ function Nav() {
 
   return (
     <div>
-      <nav
-        className="navbar fixed-top bg-dark font-monospace"
-        style={{ height: "10%" }}
-      >
+      <nav className="navbar fixed-top bg-light font-monospace shadow-md">
         <div className="container-fluid">
           <a className="navbar-brand" href="/">
-            <h2
-              className="ms-5"
-              style={{ color: "#007FFF", fontFamily: "sans-serif" }}
-            >
-              WESCU
+            <h2 className="ms-5" style={{ color: "#007FFF", fontSize: "45px" }}>
+              <b>WSCU</b>
             </h2>
           </a>
 

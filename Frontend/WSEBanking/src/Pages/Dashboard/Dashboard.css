@@ -1,0 +1,11 @@
+.mainContainer {
+    background-image: url("../../assets/backgroundImage.png");
+    background-size: 100%;
+
+}
+
+.blur{
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.7); 
+
+  }

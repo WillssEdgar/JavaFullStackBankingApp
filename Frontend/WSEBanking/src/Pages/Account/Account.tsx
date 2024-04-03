@@ -174,16 +174,22 @@ function Account() {
   };
 
   return (
-    <div className="container " style={{ marginTop: "20%" }}>
+    <div className="container" style={{ marginTop: "10%" }}>
       <div className="row justify-content-center">
-        <div className="col-md-12 m-4 bg-light p-3">
+        <div
+          className="col-md-12 m-4 p-3 rounded-3"
+          style={{ boxShadow: "10px 10px 20px black" }}
+        >
           {<LineChart data={{ transactions }} />}
         </div>
       </div>
       <div className="row justify-content-center">
         {account ? (
-          <div className="col-md-6">
-            <div className="card border-0 p-3">
+          <div className="col-md-6 ">
+            <div
+              className="card border-0 p-3 bg-transparent mt-5"
+              style={{ boxShadow: "10px 10px 20px black" }}
+            >
               <h3>Account Number: {account.accountNumber}</h3>
               <h3>Balance: ${accountBalance.toFixed(2)}</h3>
 
@@ -201,7 +207,7 @@ function Account() {
                     type="number"
                     ref={withdrawalAmountRef}
                     placeholder="Enter Withdrawal Amount"
-                    className="form-control mb-2"
+                    className="form-control mb-2 border-dark"
                   />
                   {withdrawalErrors.withdrawalAmount && (
                     <p className="text-danger">
@@ -231,7 +237,7 @@ function Account() {
                     type="number"
                     ref={depositAmountRef}
                     placeholder="Enter Deposit Amount"
-                    className="form-control mb-2"
+                    className="form-control border-dark mb-2"
                   />
                   {depositErrors.depositAmount && (
                     <p className="text-danger">{depositErrors.depositAmount}</p>
@@ -250,16 +256,26 @@ function Account() {
         ) : (
           <h3>Loading Content...</h3>
         )}
-        <div className="col-md-6  p-3 ">
-          <h3 className="text-light">Transaction History</h3>
-          <div style={{ overflowY: "auto", maxHeight: "400px" }}>
+        <div
+          className="col-md-6 mt-5 mb-5 p-3 rounded-3"
+          style={{ boxShadow: "10px 10px 20px black" }}
+        >
+          <p className="h1">Transaction History</p>
+          <div
+            className="p-3 bg-transparent"
+            style={{ overflowY: "auto", maxHeight: "400px" }}
+          >
             {/* Adjust maxHeight to your preference */}
             {transactions.length > 0 ? (
               transactions
                 .slice()
                 .reverse()
                 .map((transaction, index) => (
-                  <div key={index} className="card mb-3 w-100">
+                  <div
+                    key={index}
+                    className="card mb-3 bg-primary border-0 w-100 text-light"
+                    style={{ boxShadow: "5px 5px 10px black" }}
+                  >
                     <div className="card-body p-2">
                       <h5 className="card-title">
                         Transaction Type: {transaction.transactionType}

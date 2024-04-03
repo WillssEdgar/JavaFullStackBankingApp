@@ -156,8 +156,8 @@ function Login_Create() {
       style={{ marginTop, marginBottom }}
     >
       <div
-        className="row bg-light-subtle rounded justify-content-evenly"
-        style={{ width: "80%" }}
+        className="row rounded justify-content-evenly"
+        style={{ width: "80%", boxShadow: "10px 10px 20px black" }}
       >
         <div className="col-8 m-5">
           <h1> Login To Account</h1>
