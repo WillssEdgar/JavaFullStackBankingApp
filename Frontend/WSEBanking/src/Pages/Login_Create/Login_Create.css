@@ -1,4 +1,10 @@
-.login_create {
-    margin-top: 10%;
-    margin-bottom: 10%;
+.loginCreateContainer {
+    background-image: url("../../assets/homeBackgroundImage.png");
+    background-size: 100%;
+
 }
+
+.form-control {
+    border-color: black;
+}
+

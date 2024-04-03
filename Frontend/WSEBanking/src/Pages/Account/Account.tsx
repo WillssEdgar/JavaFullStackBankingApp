@@ -1,26 +1,49 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
+import LineChart from "../../Components/Charts/LineChart";
+import "./Account.css";
+
 interface Account {
   id: string;
   accountName: string;
   accountNumber: string;
+  balance: number;
+}
+
+interface Transaction {
+  accountNumber: string;
+  amount: number;
+  transactionDate: Array<number>;
+  transactionType: string;
 }
 
 function Account() {
-  const [withdrawalAmount, setWithdrawalAmount] = useState("");
-  const [showWithdrawalMenu, setShowWithdrawalMenu] = useState(false);
-  const [depositAmount, setDepositAmount] = useState("");
+  const withdrawalAmountRef = useRef<HTMLInputElement>(null);
+  const depositAmountRef = useRef<HTMLInputElement>(null);
 
+  const [showWithdrawalMenu, setShowWithdrawalMenu] = useState(false);
   const [showDepositMenu, setShowDepositMenu] = useState(false);
 
   const [account, setAccount] = useState<Account | null>(null);
-  const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("user_id");
-  const accountId = localStorage.getItem("id");
-  const accountNumber = localStorage.getItem("accountNumber");
+  const [transactions, setTransaction] = useState<Transaction[]>([]);
 
-  console.log("this is the account number in local storage right now", userId);
-  console.log("this is the user id in local storage right now", accountNumber);
+  const location = useLocation();
+  const user_Id = parseInt(location.state.user_Id);
+  const token = location.state.token;
+  const accountId = location.state.id;
+  const accountNumber = location.state.accountNumber;
+
+  const [accountBalance, setAccountBalance] = useState(0);
+
+  const [withdrawalErrors, setWithdrawalErrors] = useState<{
+    [key: string]: string;
+  }>({});
+  const [depositErrors, setDepositErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  console.log("Location from Account", location.state);
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -33,44 +56,81 @@ function Account() {
             },
             params: {
               accountNumber: accountNumber,
-              userId: userId,
+              userId: user_Id,
             },
           }
         );
-        console.log(response.data);
+        setAccountBalance(response.data.balance);
         setAccount(response.data);
       } catch (error) {
         console.error("Error fetching accounts: ", error);
       }
     };
-    if (token && userId) {
+    if (token && user_Id) {
       fetchAccounts();
     }
-  }, [token, userId]);
+    const fetchTransactions = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/transactions/getTransactions`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              accountId: accountId,
+            },
+          }
+        );
+        console.log(response.data);
+        setTransaction(response.data);
+      } catch (error) {
+        console.error("Error fetching accounts: ", error);
+      }
+    };
+    if (token && user_Id) {
+      fetchTransactions();
+    }
+  }, [token, user_Id]);
 
   const handWithdrawalClick = () => {
     setShowWithdrawalMenu((prev) => !prev);
   };
 
   const handleWithdrawalConfirm = async () => {
-    console.log("this is the userID", userId);
-    console.log("this is the token", token);
+    const withdrawalAmount = withdrawalAmountRef.current?.value?.trim();
+    const errors: { [key: string]: string } = {};
+
+    if (!withdrawalAmount) {
+      errors.withdrawalAmount = "A positive Withdrawal amount is required";
+    }
+    if (Object.keys(errors).length > 0) {
+      setWithdrawalErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
-        `http://localhost:8080/withdrawal?accountId=${accountId}&withdrawalAmount=${withdrawalAmount}`,
-        null, // pass null as the second argument since you're not sending any data in the request body
+        "http://localhost:8080/accounts/transactions/withdrawal",
+        {
+          accountId: accountId,
+          amount: withdrawalAmount,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(response.data);
+
       setShowWithdrawalMenu(false);
-      setWithdrawalAmount("");
+      window.location.reload();
     } catch (error) {
-      console.error("Error withdrawaling funds: ", error);
-      // Handle error (e.g., display error message to the user)
+      errors.withdrawalAmount = "Insufficient funds. Please try again.";
+      if (Object.keys(errors).length > 0) {
+        setWithdrawalErrors(errors);
+        return;
+      }
     }
   };
 
@@ -78,21 +138,37 @@ function Account() {
     setShowDepositMenu((prev) => !prev);
   };
   const handleDepositConfirm = async () => {
-    console.log("this is the userID", userId);
-    console.log("this is the token", token);
+    const depositAmount = depositAmountRef.current?.value?.trim();
+    const errors: { [key: string]: string } = {};
+
+    if (!depositAmount) {
+      errors.depositAmount = "A positive Deposit amount is required";
+    }
+    if (Object.keys(errors).length > 0) {
+      setDepositErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post(
-        `http://localhost:8080/deposit?accountId=${accountId}&depositAmount=${depositAmount}`,
-        null, // pass null as the second argument since you're not sending any data in the request body
+        "http://localhost:8080/accounts/transactions/deposit",
+        {
+          accountId: accountId,
+          amount: depositAmount,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log(response.data);
+
+      setAccountBalance(
+        (prevBalance) => prevBalance + parseFloat(depositAmount ?? "")
+      );
+
       setShowDepositMenu(false);
-      setDepositAmount("");
+      window.location.reload();
     } catch (error) {
       console.error("Error depositing funds: ", error);
       // Handle error (e.g., display error message to the user)
@@ -100,69 +176,130 @@ function Account() {
   };
 
   return (
-    <div className="container " style={{ marginTop: "20%" }}>
-      <div className="row justify-content-center">
-        {account ? (
-          <div className="col-md-6">
-            <h3>Account Number: {account.accountNumber}</h3>
-            <div className="card p-3">
-              <h3 className="mb-3">Actions</h3>
-              <button
-                type="button"
-                className="btn btn-primary btn-lg mb-3"
-                onClick={handWithdrawalClick}
+    <div className="accountContainer">
+      <div className="container" style={{ marginTop: "10%" }}>
+        <div className="row justify-content-center">
+          <div
+            className="col-md-12 m-4 p-3 rounded-3 bg-light bg-opacity-10 blur"
+            style={{ boxShadow: "10px 10px 20px black", maxWidth: "70%" }}
+          >
+            {<LineChart data={{ transactions }} />}
+          </div>
+        </div>
+        <div className="row justify-content-center">
+          {account ? (
+            <div className="col-md-6">
+              <div
+                className="card border-0 p-3 bg-transparent mt-5 blur opacity-10"
+                style={{ boxShadow: "10px 10px 20px black" }}
               >
-                Withdrawal
-              </button>
-              {showWithdrawalMenu && (
-                <div className="mb-3">
-                  <input
-                    type="number"
-                    value={withdrawalAmount}
-                    onChange={(e) => setWithdrawalAmount(e.target.value)}
-                    placeholder="Enter Withdrawal Amount"
-                    className="form-control mb-2"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleWithdrawalConfirm}
-                  >
-                    Confirm Withdrawal
-                  </button>
-                </div>
-              )}
+                <h3>Account Number: {account.accountNumber}</h3>
+                <h3>Balance: ${accountBalance.toFixed(2)}</h3>
 
-              <button
-                type="button"
-                className="btn btn-primary btn-lg mb-3"
-                onClick={handleDepositClick}
-              >
-                Deposit
-              </button>
-              {showDepositMenu && (
-                <div className="mb-3">
-                  <input
-                    type="number"
-                    value={depositAmount}
-                    onChange={(e) => setDepositAmount(e.target.value)}
-                    placeholder="Enter Deposit Amount"
-                    className="form-control mb-2"
-                  />
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleDepositConfirm}
-                  >
-                    Confirm Deposit
-                  </button>
-                </div>
+                <h3 className="mb-3">Actions</h3>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg mb-3"
+                  onClick={handWithdrawalClick}
+                >
+                  Withdrawal
+                </button>
+                {showWithdrawalMenu && (
+                  <div className="mb-3">
+                    <input
+                      type="number"
+                      ref={withdrawalAmountRef}
+                      placeholder="Enter Withdrawal Amount"
+                      className="form-control mb-2 border-dark"
+                    />
+                    {withdrawalErrors.withdrawalAmount && (
+                      <p className="text-danger">
+                        {withdrawalErrors.withdrawalAmount}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleWithdrawalConfirm}
+                    >
+                      Confirm Withdrawal
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg mb-3 blur-button "
+                  onClick={handleDepositClick}
+                >
+                  Deposit
+                </button>
+                {showDepositMenu && (
+                  <div className="mb-3">
+                    <input
+                      type="number"
+                      ref={depositAmountRef}
+                      placeholder="Enter Deposit Amount"
+                      className="form-control border-dark mb-2"
+                    />
+                    {depositErrors.depositAmount && (
+                      <p className="text-danger">
+                        {depositErrors.depositAmount}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary blur-button opacity-10"
+                      onClick={handleDepositConfirm}
+                    >
+                      Confirm Deposit
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <h3>Loading Content...</h3>
+          )}
+          <div
+            className="col-md-6 mt-5 mb-5 p-3 rounded-3 bg-light blur bg-opacity-10"
+            style={{ boxShadow: "10px 10px 20px black" }}
+          >
+            <p className="h1">Transaction History</p>
+            <div
+              className="p-3 bg-transparent"
+              style={{ overflowY: "auto", maxHeight: "400px" }}
+            >
+              {/* Adjust maxHeight to your preference */}
+              {transactions.length > 0 ? (
+                transactions
+                  .slice()
+                  .reverse()
+                  .map((transaction, index) => (
+                    <div
+                      key={index}
+                      className="card mb-3 bg-dark bg-opacity-50 border-0 w-100 text-dark"
+                      style={{ boxShadow: "5px 5px 10px black" }}
+                    >
+                      <div className="card-body p-2">
+                        <h5 className="card-title">
+                          Transaction Type: {transaction.transactionType}
+                        </h5>
+                        <p className="card-text">
+                          Amount: ${transaction.amount.toFixed(2)} <br />
+                          Transaction Date: {transaction.transactionDate[0]}-
+                          {transaction.transactionDate[1]}-
+                          {transaction.transactionDate[2]}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <h4> No transactions found.</h4>
               )}
             </div>
           </div>
-        ) : (
-          <h3>Loading Content...</h3>
-        )}
+        </div>
       </div>
     </div>
   );

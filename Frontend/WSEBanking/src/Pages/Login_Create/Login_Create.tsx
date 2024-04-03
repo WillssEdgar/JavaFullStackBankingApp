@@ -1,10 +1,20 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login_Create.css";
 import axios, { AxiosResponse } from "axios";
 
 function Login_Create() {
   const navigate = useNavigate();
+
+  const [loginErrors, setLoginErrors] = useState<{ [key: string]: string }>({});
+  const [registrationErrors, setRegistrationErrors] = useState<{
+    [key: string]: string;
+  }>({});
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+  const nameRegex = /^[a-zA-Z]+$/;
+  const usernameRegex = /^[a-zA-Z0-9_]+$/;
 
   const handleLoginSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -18,6 +28,22 @@ function Login_Create() {
     const email = emailInput.value;
     const password = passwordInput.value;
 
+    const errors: { [key: string]: string } = {};
+
+    if (!email || !emailRegex.test(email)) {
+      errors.email = "Valid email is required.";
+    }
+
+    if (!password || !passwordRegex.test(password)) {
+      errors.password =
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setLoginErrors(errors);
+      return;
+    }
+
     try {
       const response = await axios.post("http://localhost:8080/login", {
         email,
@@ -26,12 +52,8 @@ function Login_Create() {
       const token = response.data.token;
       const id = response.data.id;
 
-      localStorage.setItem("token", token);
-      localStorage.setItem("user_id", id);
-
       console.log("Login successful:", response.data);
-      console.log("Token: ", token);
-      navigate("/Dashboard");
+      navigate("/Dashboard", { state: { user_Id: id, token: token } });
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Login failed:", error.response?.data);
@@ -67,6 +89,34 @@ function Login_Create() {
     const email = emailInput.value;
     const password = passwordInput.value;
 
+    const errors: { [key: string]: string } = {};
+
+    if (!firstName || !nameRegex.test(firstName)) {
+      errors.firstName = "Valid first name is required.";
+    }
+
+    if (!lastName || !nameRegex.test(lastName)) {
+      errors.lastName = "Valid last name is required.";
+    }
+
+    if (!username || !usernameRegex.test(username)) {
+      errors.username = "Valid username is required.";
+    }
+
+    if (!email || !emailRegex.test(email)) {
+      errors.email = "Valid email is required.";
+    }
+
+    if (!password || !passwordRegex.test(password)) {
+      errors.password =
+        "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setRegistrationErrors(errors);
+      return;
+    }
+
     try {
       const response: AxiosResponse<{ token: string }> = await axios.post(
         "http://localhost:8080/register",
@@ -81,7 +131,6 @@ function Login_Create() {
       const token = response.data.token;
       localStorage.setItem("token", token);
 
-      console.log("Registration successful:", response.data);
       navigate("/Dashboard");
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -94,17 +143,26 @@ function Login_Create() {
       }
     }
   };
+  const loginErrorsPresent = Object.keys(loginErrors).length > 0;
+  const registrationErrorsPresent = Object.keys(registrationErrors).length > 0;
+  const marginTop =
+    loginErrorsPresent || registrationErrorsPresent ? "25rem" : "10rem";
+  const marginBottom =
+    loginErrorsPresent || registrationErrorsPresent ? "20rem" : "10rem";
 
   return (
-    <div className="login_create">
-      <div className="container  d-flex align-items-center justify-content-center vh-100">
+    <div className="loginCreateContainer">
+      <div
+        className="container d-flex align-items-center justify-content-center vh-100 "
+        style={{ marginTop, marginBottom }}
+      >
         <div
-          className="row bg-light-subtle rounded justify-content-evenly"
-          style={{ width: "80%", height: "auto" }}
+          className="row rounded justify-content-evenly bg-light bg-opacity-25 blur"
+          style={{ width: "80%", boxShadow: "10px 10px 20px black" }}
         >
           <div className="col-8 m-5">
             <h1> Login To Account</h1>
-            <form className="loginForm" onSubmit={handleLoginSubmit}>
+            <form className="loginForm " onSubmit={handleLoginSubmit}>
               <div className="mb-3">
                 <label htmlFor="exampleInputEmail1" className="form-label">
                   Email address
@@ -115,7 +173,11 @@ function Login_Create() {
                   id="exampleInputEmail1"
                   aria-describedby="emailHelp"
                   name="email"
+                  required
                 />
+                {loginErrors.email && (
+                  <p className="text-danger">{loginErrors.email}</p>
+                )}
                 <div id="emailHelp" className="form-text">
                   We'll never share your email with anyone else.
                 </div>
@@ -129,7 +191,11 @@ function Login_Create() {
                   className="form-control"
                   id="exampleInputPassword1"
                   name="password"
+                  required
                 />
+                {loginErrors.password && (
+                  <p className="text-danger">{loginErrors.password}</p>
+                )}
               </div>
               <button type="submit" className="btn btn-primary">
                 Submit
@@ -149,7 +215,11 @@ function Login_Create() {
                   className="form-control"
                   id="firstname"
                   name="firstName"
+                  required
                 />
+                {registrationErrors.firstName && (
+                  <p className="text-danger">{registrationErrors.firstName}</p>
+                )}
               </div>
               <div className="col-md-6">
                 <label htmlFor="lastname" className="form-label">
@@ -160,7 +230,11 @@ function Login_Create() {
                   className="form-control"
                   id="lastname"
                   name="lastName"
+                  required
                 />
+                {registrationErrors.lastName && (
+                  <p className="text-danger">{registrationErrors.lastName}</p>
+                )}
               </div>
               <div className="col-12">
                 <label htmlFor="inputEmail4" className="form-label">
@@ -171,7 +245,11 @@ function Login_Create() {
                   className="form-control"
                   id="inputEmail4"
                   name="email"
+                  required
                 />
+                {registrationErrors.email && (
+                  <p className="text-danger">{registrationErrors.email}</p>
+                )}
               </div>
               <div className="col-md-6">
                 <label htmlFor="username" className="form-label">
@@ -182,7 +260,11 @@ function Login_Create() {
                   className="form-control"
                   id="username"
                   name="username"
+                  required
                 />
+                {registrationErrors.username && (
+                  <p className="text-danger">{registrationErrors.username}</p>
+                )}
               </div>
               <div className="col-md-6">
                 <label htmlFor="inputPassword4" className="form-label">
@@ -193,7 +275,11 @@ function Login_Create() {
                   className="form-control"
                   id="inputPassword4"
                   name="password"
+                  required
                 />
+                {registrationErrors.password && (
+                  <p className="text-danger">{registrationErrors.password}</p>
+                )}
               </div>
               <div className="col-12">
                 <button type="submit" className="btn btn-primary">
