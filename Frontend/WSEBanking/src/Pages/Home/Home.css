@@ -1,0 +1,13 @@
+.homeContainer {
+    background-image: url("../../assets/hoomeImage.png");
+    background-size: 100%;
+    background-position: 60%;   
+    
+
+}
+.blur{
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.7); 
+
+  }
+

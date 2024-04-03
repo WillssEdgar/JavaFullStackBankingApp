@@ -2,6 +2,8 @@ import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import LineChart from "../../Components/Charts/LineChart";
+import "./Account.css";
+
 interface Account {
   id: string;
   accountName: string;
@@ -174,124 +176,128 @@ function Account() {
   };
 
   return (
-    <div className="container" style={{ marginTop: "10%" }}>
-      <div className="row justify-content-center">
-        <div
-          className="col-md-12 m-4 p-3 rounded-3"
-          style={{ boxShadow: "10px 10px 20px black" }}
-        >
-          {<LineChart data={{ transactions }} />}
+    <div className="accountContainer">
+      <div className="container" style={{ marginTop: "10%" }}>
+        <div className="row justify-content-center">
+          <div
+            className="col-md-12 m-4 p-3 rounded-3 bg-light bg-opacity-10 blur"
+            style={{ boxShadow: "10px 10px 20px black", maxWidth: "70%" }}
+          >
+            {<LineChart data={{ transactions }} />}
+          </div>
         </div>
-      </div>
-      <div className="row justify-content-center">
-        {account ? (
-          <div className="col-md-6 ">
+        <div className="row justify-content-center">
+          {account ? (
+            <div className="col-md-6">
+              <div
+                className="card border-0 p-3 bg-transparent mt-5 blur opacity-10"
+                style={{ boxShadow: "10px 10px 20px black" }}
+              >
+                <h3>Account Number: {account.accountNumber}</h3>
+                <h3>Balance: ${accountBalance.toFixed(2)}</h3>
+
+                <h3 className="mb-3">Actions</h3>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg mb-3"
+                  onClick={handWithdrawalClick}
+                >
+                  Withdrawal
+                </button>
+                {showWithdrawalMenu && (
+                  <div className="mb-3">
+                    <input
+                      type="number"
+                      ref={withdrawalAmountRef}
+                      placeholder="Enter Withdrawal Amount"
+                      className="form-control mb-2 border-dark"
+                    />
+                    {withdrawalErrors.withdrawalAmount && (
+                      <p className="text-danger">
+                        {withdrawalErrors.withdrawalAmount}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      onClick={handleWithdrawalConfirm}
+                    >
+                      Confirm Withdrawal
+                    </button>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className="btn btn-primary btn-lg mb-3 blur-button "
+                  onClick={handleDepositClick}
+                >
+                  Deposit
+                </button>
+                {showDepositMenu && (
+                  <div className="mb-3">
+                    <input
+                      type="number"
+                      ref={depositAmountRef}
+                      placeholder="Enter Deposit Amount"
+                      className="form-control border-dark mb-2"
+                    />
+                    {depositErrors.depositAmount && (
+                      <p className="text-danger">
+                        {depositErrors.depositAmount}
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-primary blur-button opacity-10"
+                      onClick={handleDepositConfirm}
+                    >
+                      Confirm Deposit
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <h3>Loading Content...</h3>
+          )}
+          <div
+            className="col-md-6 mt-5 mb-5 p-3 rounded-3 bg-light blur bg-opacity-10"
+            style={{ boxShadow: "10px 10px 20px black" }}
+          >
+            <p className="h1">Transaction History</p>
             <div
-              className="card border-0 p-3 bg-transparent mt-5"
-              style={{ boxShadow: "10px 10px 20px black" }}
+              className="p-3 bg-transparent"
+              style={{ overflowY: "auto", maxHeight: "400px" }}
             >
-              <h3>Account Number: {account.accountNumber}</h3>
-              <h3>Balance: ${accountBalance.toFixed(2)}</h3>
-
-              <h3 className="mb-3">Actions</h3>
-              <button
-                type="button"
-                className="btn btn-primary btn-lg mb-3"
-                onClick={handWithdrawalClick}
-              >
-                Withdrawal
-              </button>
-              {showWithdrawalMenu && (
-                <div className="mb-3">
-                  <input
-                    type="number"
-                    ref={withdrawalAmountRef}
-                    placeholder="Enter Withdrawal Amount"
-                    className="form-control mb-2 border-dark"
-                  />
-                  {withdrawalErrors.withdrawalAmount && (
-                    <p className="text-danger">
-                      {withdrawalErrors.withdrawalAmount}
-                    </p>
-                  )}
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleWithdrawalConfirm}
-                  >
-                    Confirm Withdrawal
-                  </button>
-                </div>
-              )}
-
-              <button
-                type="button"
-                className="btn btn-primary btn-lg mb-3"
-                onClick={handleDepositClick}
-              >
-                Deposit
-              </button>
-              {showDepositMenu && (
-                <div className="mb-3">
-                  <input
-                    type="number"
-                    ref={depositAmountRef}
-                    placeholder="Enter Deposit Amount"
-                    className="form-control border-dark mb-2"
-                  />
-                  {depositErrors.depositAmount && (
-                    <p className="text-danger">{depositErrors.depositAmount}</p>
-                  )}
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={handleDepositConfirm}
-                  >
-                    Confirm Deposit
-                  </button>
-                </div>
+              {/* Adjust maxHeight to your preference */}
+              {transactions.length > 0 ? (
+                transactions
+                  .slice()
+                  .reverse()
+                  .map((transaction, index) => (
+                    <div
+                      key={index}
+                      className="card mb-3 bg-dark bg-opacity-50 border-0 w-100 text-dark"
+                      style={{ boxShadow: "5px 5px 10px black" }}
+                    >
+                      <div className="card-body p-2">
+                        <h5 className="card-title">
+                          Transaction Type: {transaction.transactionType}
+                        </h5>
+                        <p className="card-text">
+                          Amount: ${transaction.amount.toFixed(2)} <br />
+                          Transaction Date: {transaction.transactionDate[0]}-
+                          {transaction.transactionDate[1]}-
+                          {transaction.transactionDate[2]}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+              ) : (
+                <h4> No transactions found.</h4>
               )}
             </div>
-          </div>
-        ) : (
-          <h3>Loading Content...</h3>
-        )}
-        <div
-          className="col-md-6 mt-5 mb-5 p-3 rounded-3"
-          style={{ boxShadow: "10px 10px 20px black" }}
-        >
-          <p className="h1">Transaction History</p>
-          <div
-            className="p-3 bg-transparent"
-            style={{ overflowY: "auto", maxHeight: "400px" }}
-          >
-            {/* Adjust maxHeight to your preference */}
-            {transactions.length > 0 ? (
-              transactions
-                .slice()
-                .reverse()
-                .map((transaction, index) => (
-                  <div
-                    key={index}
-                    className="card mb-3 bg-primary border-0 w-100 text-light"
-                    style={{ boxShadow: "5px 5px 10px black" }}
-                  >
-                    <div className="card-body p-2">
-                      <h5 className="card-title">
-                        Transaction Type: {transaction.transactionType}
-                      </h5>
-                      <p className="card-text">
-                        Amount: ${transaction.amount.toFixed(2)} <br />
-                        Transaction Date: {transaction.transactionDate[0]}-
-                        {transaction.transactionDate[1]}-
-                        {transaction.transactionDate[2]}
-                      </p>
-                    </div>
-                  </div>
-                ))
-            ) : (
-              <h4> No transactions found.</h4>
-            )}
           </div>
         </div>
       </div>

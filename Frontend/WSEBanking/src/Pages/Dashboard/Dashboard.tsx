@@ -199,10 +199,10 @@ const Dashboard: React.FC = () => {
         <div className="row justify-content-evenly">
           <div className="col-12 m-5 text-center">
             <div
-              className="container rounded-4 p-3 bg-dark bg-opacity-25 blur"
-              style={{ boxShadow: "10px 10px 20px black" }}
+              className="container rounded-4 p-3 bg-dark bg-opacity-10 blur"
+              style={{ boxShadow: "10px 10px 20px black", maxWidth: "80%" }}
             >
-              <h3 className="mb-4">Accounts</h3>
+              <h1 className="mb-4 display-3 fw-bold">Accounts</h1>
               <div className="row justify-content-evenly">
                 {accounts.map(
                   (account: {
@@ -213,8 +213,10 @@ const Dashboard: React.FC = () => {
                   }) => (
                     <div className="col-12 col-md-6" key={account.id}>
                       <div
-                        className="card border-0 mb-3 bg-dark bg-opacity-75 bg-gradient blur"
-                        style={{ boxShadow: "10px 10px 15px black" }}
+                        className="card border-0 mb-3 bg-dark bg-opacity-25 bg-gradient blur"
+                        style={{
+                          boxShadow: "10px 10px 15px black",
+                        }}
                       >
                         <div className="card-body">
                           <h5 className="card-title text-light">
@@ -226,7 +228,7 @@ const Dashboard: React.FC = () => {
                           </p>
                           <button
                             type="button"
-                            className="btn btn-primary btn-sm"
+                            className="btn btn-primary btn-sm opacity-75"
                             onClick={() =>
                               handleAccountClick(
                                 account.id,
@@ -247,14 +249,14 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           <div
-            className="col-12 p-4 rounded-4 text-center bg-dark bg-opacity-25 blur"
+            className="col-12 p-4 rounded-4 text-center bg-dark bg-opacity-10 blur"
             style={{ boxShadow: "10px 10px 20px black" }}
           >
-            <h3>Actions</h3>
+            <h1 className="display-3 fw-bold">Actions</h1>
             <div className="d-grid gap-3 d-md-block m-4">
               <button
                 type="button"
-                className="btn btn-primary btn-lg "
+                className="btn btn-primary btn-lg opacity-75 "
                 onClick={handleAccountMenuClick}
                 style={{ width: "100%" }}
               >
@@ -324,7 +326,7 @@ const Dashboard: React.FC = () => {
               )}
               <button
                 type="button"
-                className="btn btn-primary btn-lg mt-4"
+                className="btn btn-primary btn-lg mt-4 opacity-75"
                 onClick={handleTransferMenuClick}
                 style={{ width: "100%" }}
               >

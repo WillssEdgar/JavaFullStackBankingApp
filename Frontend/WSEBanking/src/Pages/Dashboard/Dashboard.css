@@ -1,11 +1,12 @@
 .mainContainer {
-    background-image: url("../../assets/backgroundImage.png");
+    background-image: url("../../assets/lineBackground.png");
     background-size: 100%;
+    background-position: 50%;
 
 }
 
 .blur{
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
     background-color: rgba(0, 0, 0, 0.7); 
 
   }

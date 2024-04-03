@@ -31,7 +31,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
           display: false,
         },
         ticks: {
-          color: "#black",
+          color: "black",
         },
       },
       y: {
@@ -41,10 +41,10 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
           color: "black",
         },
         grid: {
-          color: "#black", // Y-axis grid color
+          color: "black", // Y-axis grid color
         },
         ticks: {
-          color: "#black",
+          color: "black",
         },
       },
     },

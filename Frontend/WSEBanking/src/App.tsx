@@ -9,7 +9,7 @@ import Account from "./Pages/Account/Account";
 
 function App() {
   return (
-    <div>
+    <div className="background">
       <BrowserRouter>
         <Nav />
         <Routes>
