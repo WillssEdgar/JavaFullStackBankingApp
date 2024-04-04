@@ -51,7 +51,7 @@ const LineChart: React.FC<LineChartProps> = ({ data }) => {
     plugins: {
       legend: {
         labels: {
-          color: "#black", // Legend label color
+          color: "black", // Legend label color
         },
       },
       tooltip: {

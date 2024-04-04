@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import "./Dashboard.css";
@@ -55,7 +55,7 @@ const Dashboard: React.FC = () => {
             params: { userId: user_Id },
           }
         );
-        console.log("response data ", response.data);
+
         setAccounts(response.data);
       } catch (error) {
         console.error("Error fetching accounts: ", error);
@@ -64,7 +64,7 @@ const Dashboard: React.FC = () => {
     if (token) {
       fetchAccounts();
     }
-  }, [token]);
+  }, [token, user_Id]);
   const navigate = useNavigate();
   const handleAccountClick = (
     accountId: string,
@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleAccountMenuClick = () => {
-    setShowAccountMenu((prev: any) => !prev);
+    setShowAccountMenu((prev) => !prev);
   };
 
   const handleAddAccount = async () => {
@@ -106,7 +106,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      const response: AxiosResponse<{ token: string }> = await axios.post(
+      await axios.post(
         "http://localhost:8080/accounts/addNewAccount",
         {
           accountName: newAccountName,
@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
       window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Registration failed:", error.response?.data);
+        console.error("Registration failed:");
       } else {
         console.error(
           "An unexpected error occurred during registration:",
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
   };
   const handleTransferMenuClick = () => {
     console.log("Before toggle:", showTransferMenu); // Log the current state
-    setShowTransferMenu((prev: any) => !prev);
+    setShowTransferMenu((prev: boolean) => !prev);
     console.log("After toggle:", showTransferMenu); // Log the updated state
   };
   const handleTransferMoney = async () => {
@@ -162,7 +162,7 @@ const Dashboard: React.FC = () => {
     }
 
     try {
-      const response: AxiosResponse<{ token: string }> = await axios.post(
+      await axios.post(
         "http://localhost:8080/accounts/transactions/transfer",
         {
           fromAccount: selectedFromAccount,
@@ -180,7 +180,7 @@ const Dashboard: React.FC = () => {
       window.location.reload();
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error("Transfer failed:", error.response?.data);
+        console.error("Transfer failed:");
       } else {
         console.error(
           "An unexpected error occurred during registration:",
@@ -341,20 +341,11 @@ const Dashboard: React.FC = () => {
                       id="fromAccount"
                     >
                       <option value="">Select Account</option>
-                      {accounts.map(
-                        (account: {
-                          id: any;
-                          accountNumber: any;
-                          accountName: any;
-                        }) => (
-                          <option
-                            key={account.id}
-                            value={account.accountNumber}
-                          >
-                            {account.accountName} - {account.accountNumber}
-                          </option>
-                        )
-                      )}
+                      {accounts.map((account: Account) => (
+                        <option key={account.id} value={account.accountNumber}>
+                          {account.accountName} - {account.accountNumber}
+                        </option>
+                      ))}
                     </select>
                     <label htmlFor="fromAccount ">From Account:</label>
                     {transferErrors.selectedFromAccount && (
@@ -370,20 +361,11 @@ const Dashboard: React.FC = () => {
                       id="toAccount"
                     >
                       <option value="">Select Account</option>
-                      {accounts.map(
-                        (account: {
-                          id: any;
-                          accountNumber: any;
-                          accountName: any;
-                        }) => (
-                          <option
-                            key={account.id}
-                            value={account.accountNumber}
-                          >
-                            {account.accountName} - {account.accountNumber}
-                          </option>
-                        )
-                      )}
+                      {accounts.map((account: Account) => (
+                        <option key={account.id} value={account.accountNumber}>
+                          {account.accountName} - {account.accountNumber}
+                        </option>
+                      ))}
                     </select>
                     <label htmlFor="toAccount">To Account:</label>
                     {transferErrors.selectedToAccount && (

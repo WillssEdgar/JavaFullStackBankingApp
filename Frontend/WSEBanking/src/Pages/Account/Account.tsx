@@ -91,7 +91,7 @@ function Account() {
     if (token && user_Id) {
       fetchTransactions();
     }
-  }, [token, user_Id]);
+  }, [token, user_Id, accountId, accountNumber]);
 
   const handWithdrawalClick = () => {
     setShowWithdrawalMenu((prev) => !prev);
@@ -110,7 +110,7 @@ function Account() {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8080/accounts/transactions/withdrawal",
         {
           accountId: accountId,
@@ -150,7 +150,7 @@ function Account() {
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         "http://localhost:8080/accounts/transactions/deposit",
         {
           accountId: accountId,
