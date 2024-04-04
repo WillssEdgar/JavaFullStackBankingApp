@@ -1,82 +1,121 @@
 // import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import home from "../../assets/home.png";
+import login from "../../assets/login.png";
+import dashboard from "../../assets/dashboard.png";
 
 function Nav() {
   const navigate = useNavigate();
-  const auth = localStorage.getItem("token");
+  const location = useLocation();
+  const auth = location.state && location.state.token;
+
+  console.log("Location State From Nav:", location.state);
+
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear;
+    navigate(location.pathname, { replace: true });
     navigate("/Login_Create");
   };
 
   return (
     <div>
-      <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary font-monospace">
+      <nav className="navbar fixed-top bg-light font-monospace shadow-md">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
-            <h2 className="font-monospace"> WSE Banking </h2>
+          <a className="navbar-brand" href="/">
+            <h2 className="ms-5" style={{ color: "#007FFF", fontSize: "45px" }}>
+              <b>WSCU</b>
+            </h2>
           </a>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div
-            className="collapse navbar-collapse justify-content-end"
-            id="navbarNav"
-          >
-            <ul className="navbar-nav">
-              <li className="nav-item">
-                <Link
-                  className="nav-link active border-end border-white "
-                  aria-current="page"
-                  to="/"
-                >
-                  <h5>Home</h5>
-                </Link>
-              </li>
 
-              {auth ? (
-                <>
-                  <li className="nav-item">
-                    <Link
-                      className="nav-link active border-end border-white"
-                      aria-current="page"
-                      to="/Dashboard"
-                    >
-                      <h5>Dashboard</h5>
-                    </Link>
-                  </li>
-                  <li className="nav-item">
-                    <a
-                      className="nav-link active border-end border-white"
-                      aria-current="page"
-                      href="/Login_Create"
-                      onClick={handleLogout}
-                    >
-                      <h5>Logout</h5>
-                    </a>
-                  </li>
-                </>
-              ) : (
+          <ul className="nav">
+            <li className="nav-item">
+              <Link
+                className="nav-link active "
+                aria-current="page"
+                to={"/"}
+                state={location.state}
+              >
+                <img
+                  src={home}
+                  className="img-fluid rounded-4 me-1"
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                  }}
+                  alt="home"
+                />
+                Home
+              </Link>
+            </li>
+
+            {auth ? (
+              <>
                 <li className="nav-item">
                   <Link
-                    className="nav-link active border-end border-white"
+                    className="nav-link active"
                     aria-current="page"
-                    to="/Login_Create"
+                    to={"/Dashboard"}
+                    state={{
+                      id: location.state.accountId,
+                      user_Id: location.state.user_Id,
+                      accountNumber: location.state.accountNumber,
+                      accountName: location.state.accountName,
+                      token: location.state.token,
+                    }}
                   >
-                    <h5>Create/Login</h5>
+                    <img
+                      src={dashboard}
+                      className="img-fluid rounded-4 me-1"
+                      style={{
+                        width: "20px",
+                        height: "20px",
+                      }}
+                      alt="dashboard"
+                    />
+                    Dashboard
                   </Link>
                 </li>
-              )}
-            </ul>
-          </div>
+                <li className="nav-item">
+                  <a
+                    className="nav-link active"
+                    aria-current="page"
+                    href="/Login_Create"
+                    onClick={handleLogout}
+                  >
+                    <img
+                      src={login}
+                      className="img-fluid me-1 rounded-4"
+                      style={{
+                        width: "15px",
+                        height: "15px",
+                      }}
+                      alt="logout"
+                    />
+                    Logout
+                  </a>
+                </li>
+              </>
+            ) : (
+              <li className="nav-item">
+                <Link
+                  className="nav-link active"
+                  aria-current="page"
+                  to={"/Login_Create"}
+                >
+                  <img
+                    src={login}
+                    className="img-fluid me-1 rounded-4"
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                    }}
+                    alt="login"
+                  />
+                  Create/Login
+                </Link>
+              </li>
+            )}
+          </ul>
         </div>
       </nav>
     </div>

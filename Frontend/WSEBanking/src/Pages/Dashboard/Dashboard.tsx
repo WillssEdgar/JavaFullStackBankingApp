@@ -116,6 +116,7 @@ const Dashboard: React.FC = () => {
           },
         }
       );
+      console.log(response.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Transfer failed:", error.response?.data);
