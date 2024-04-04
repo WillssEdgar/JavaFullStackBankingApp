@@ -21,11 +21,10 @@ jobs:
         java-version: '21'
         distribution: 'oracle'
         
-    - name: Navigate to the Spring Boot project directory
-      run: cd Backend/WSEBanking && ls
-      
-    - name: Build with Maven
-      run: mvn -B clean install && cd ls
+    - name: Navigate to the Spring Boot project directory and build with Maven
+      run: |
+        cd Backend/WSEBanking
+        mvn -B clean install 
 
     - name: Test with Maven
       run: mvn test
