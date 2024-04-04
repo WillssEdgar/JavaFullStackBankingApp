@@ -1,12 +1,10 @@
  package com.WSEBanking.WSEBanking.api.controller;
 
  import com.WSEBanking.WSEBanking.api.DTOs.UserDto;
- import com.WSEBanking.WSEBanking.api.model.Account;
  import com.WSEBanking.WSEBanking.config.UserAuthenticationProvider;
  import com.WSEBanking.WSEBanking.service.UserService;
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
  import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.http.HttpStatus;
  import org.springframework.http.ResponseEntity;
  import org.springframework.web.bind.annotation.*;
  //import org.springframework.web.bind.annotation.GetMapping;
@@ -22,15 +20,20 @@
      UserDto userDto;
      UserAuthenticationProvider userAuthenticationProvider;
 
+     /**
+      * Retrieves all accounts associated with a user.
+      *
+      * @param userId The ID of the user.
+      * @return ResponseEntity containing a list of maps representing account information.
+      */
      @GetMapping("/users/accounts")
      public ResponseEntity<List<Map<String, String>>> findAllAccountsByUserId(@RequestParam("userId") int userId){
          List<Map<String, String>> accounts = userService.findAllAccountsByUserId(userId);
-         return ResponseEntity.ok(accounts);
-     }
-
-     @GetMapping("/messages")
-     public ResponseEntity<List<String>> messages() {
-         return ResponseEntity.ok(Arrays.asList("first", "Second"));
+         if (accounts != null) {
+             return ResponseEntity.ok(accounts);
+         } else {
+             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+         }
      }
 
  }

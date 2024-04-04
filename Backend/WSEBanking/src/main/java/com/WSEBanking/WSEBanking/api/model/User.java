@@ -15,6 +15,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Represents a user entity in the system.
+ * Implements UserDetails interface for Spring Security integration.
+ */
 @Entity
 @Table(name = "users")
 @Getter

@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) representing an entire User.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

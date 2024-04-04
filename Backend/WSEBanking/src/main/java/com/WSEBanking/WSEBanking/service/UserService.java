@@ -25,26 +25,45 @@ import com.WSEBanking.WSEBanking.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Service class responsible for managing user-related operations.
+ */
 @RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final AccountMapper accountMapper;
 
-
+    /**
+     * Authenticates a user based on provided credentials.
+     *
+     * @param credentialsDto The DTO containing user credentials.
+     * @return The DTO representing the authenticated user.
+     * @throws UsernameNotFoundException if the user is not found.
+     * @throws BadCredentialsException   if the provided password is invalid.
+     */
     public UserDto login(CredentialsDto credentialsDto) {
-        User user = userRepository.findByEmail(credentialsDto.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("Unknown User"));
+        User user = userRepository.findByEmail(credentialsDto.getEmail());
+        System.out.println("User" + user);
+        if (user != null) {
 
-        if (passwordEncoder.matches(credentialsDto.getPassword(), user.getPassword())) {
-            return userMapper.toUserDto(user);
+            if (passwordEncoder.matches(credentialsDto.getPassword(), user.getPassword())) {
+                return userMapper.toUserDto(user);
+            }
+            throw new BadCredentialsException("Invalid Password");
         }
-        throw new BadCredentialsException("Invalid Password");
+        throw new UsernameNotFoundException("No username not found!");
     }
 
+    /**
+     * Registers a new user.
+     *
+     * @param userDto The DTO containing user registration data.
+     * @return The DTO representing the registered user.
+     * @throws AppException if the username already exists.
+     */
     public UserDto register(SignUpDto userDto) {
         Optional<User> optionalUser = userRepository.findByUsername(userDto.getUsername());
 
@@ -65,17 +84,30 @@ public class UserService {
         return userMapper.toUserDto(savedUser);
     }
 
+    /**
+     * Finds a user by username
+     *
+     * @param username The username of the user to find.
+     * @return The DTO representing the found user.
+     * @throws AppException if the user is not found.
+     */
     public UserDto findByLogin(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
         return userMapper.toUserDto(user);
     }
 
+    /**
+     * Finds all accounts associated with a user.
+     *
+     * @param userId The ID of the user.
+     * @return A list of maps containing account information.
+     */
     public List<Map<String, String>> findAllAccountsByUserId(int userId){
         List<Account> accounts = userRepository.findAccountsByUserId(userId);
 
         return accounts.stream()
-                .map(account -> accountMapper.toMap(account))
+                .map(accountMapper::toMap)
                 .collect(Collectors.toList());
     }
 }

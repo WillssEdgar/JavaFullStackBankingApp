@@ -6,9 +6,17 @@ import org.mapstruct.Mapper;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Mapper interface for mapping Account objects to a Map.
+ */
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
+    /**
+     * Converts an Account object to a Map.
+     *
+     * @param account The Account object to be converted.
+     * @return A Map representing the Account object.
+     */
     default Map<String, String> toMap(Account account){
         if (account == null){
             return null;
