@@ -24,6 +24,10 @@ This is a full-stack banking application developed using Spring Boot for the bac
 - React Router
 - Axios
 
+### Other Technologies
+- Postman
+- Figma
+
 ## Setup Instructions
 
 ### Backend Setup
@@ -75,6 +79,14 @@ This is a full-stack banking application developed using Spring Boot for the bac
 ## API Endpoints
 
 The following are the available API endpoints:
+- `/login`
+- `/register`
+- `/accounts/transactions/deposit`
+- `/accounts/transactions/withdrawal`
+- `/accounts/transactions/transfer`
+- `/accounts/addNewAccount`
+- `/transactions/getTransactions`
+- `/accounts/account`
 
 
 
@@ -83,15 +95,8 @@ The following are the available API endpoints:
 The frontend application uses React Router for routing. The following are the available routes:
 
 - `/`: Home
-- `/login`: Login
-- `/register`: Register
-- `/accounts`: Account management
-- `/transactions`: Transaction history
+- `/Login_Create`: Login
+- `/Dashboard`: Dashboard
+- `/Account`: Account Details
 
-## Contributing
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
