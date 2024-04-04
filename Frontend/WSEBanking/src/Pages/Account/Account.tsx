@@ -11,7 +11,7 @@ interface Account {
   balance: number;
 }
 
-interface Transaction {
+interface AccountTransaction {
   accountNumber: string;
   amount: number;
   transactionDate: Array<number>;
@@ -26,7 +26,7 @@ function Account() {
   const [showDepositMenu, setShowDepositMenu] = useState(false);
 
   const [account, setAccount] = useState<Account | null>(null);
-  const [transactions, setTransaction] = useState<Transaction[]>([]);
+  const [transactions, setTransaction] = useState<AccountTransaction[]>([]);
 
   const location = useLocation();
   const user_Id = parseInt(location.state.user_Id);
@@ -183,7 +183,16 @@ function Account() {
             className="col-md-12 m-4 p-3 rounded-3 bg-light bg-opacity-10 blur"
             style={{ boxShadow: "10px 10px 20px black", maxWidth: "70%" }}
           >
-            {<LineChart data={{ transactions }} />}
+            {
+              <LineChart
+                data={{
+                  transactions: transactions.map((transaction) => ({
+                    balance: Number(transaction.amount), // Assuming amount represents the balance in transactions
+                    transactionDate: transaction.transactionDate,
+                  })),
+                }}
+              />
+            }
           </div>
         </div>
         <div className="row justify-content-center">

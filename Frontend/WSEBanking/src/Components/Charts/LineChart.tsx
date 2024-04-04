@@ -3,14 +3,14 @@ import "chart.js/auto";
 import { Line } from "react-chartjs-2";
 import { ChartData } from "chart.js/auto";
 
-interface Transaction {
+interface LineChartTransaction {
   balance: number;
   transactionDate: Array<number>;
 }
 
 interface LineChartProps {
   data: {
-    transactions: Transaction[];
+    transactions: LineChartTransaction[];
   };
 }
 
