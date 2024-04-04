@@ -7,27 +7,24 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object (DTO) representing the credentials upon sign up.
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class SignUpDto {
-
     @NotEmpty
     private String firstName;
-
     @NotEmpty
     private String lastName;
-
     @NotEmpty
     private String username;
-
     @NotEmpty
     private Role role;
-
     @NotEmpty
     private String password;
-
     @NotEmpty
     private String email;
 

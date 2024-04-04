@@ -15,11 +15,24 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Custom authentication entry point for handling unauthorized requests.
+ */
 @Component
 public class UserAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    /**
+     * Handles unauthorized requests by setting the response status to 401 (Unauthorized)
+     * and returning an ErrorDto with an appropriate message.
+     *
+     * @param request       The HTTP servlet request.
+     * @param response      The HTTP servlet response.
+     * @param authException The authentication exception.
+     * @throws IOException      If an I/O error occurs during response writing.
+     * @throws ServletException If an error occurs during servlet processing.
+     */
     @Override
     public void commence(
             HttpServletRequest request,

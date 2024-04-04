@@ -2,6 +2,7 @@ package com.WSEBanking.WSEBanking.api.controller;
 
 import java.net.URI;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,25 +24,38 @@ public class AuthController {
     private final UserService userService;
     private final UserAuthenticationProvider userAuthenticationProvider;
 
+    /**
+     * Handles user login.
+     *
+     * @param credentialsDto The DTO containing user credentials.
+     * @return ResponseEntity containing the authenticated user DTO along with an authentication token.
+     */
     @PostMapping("/login")
     public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
-        System.out.println("Username:" + credentialsDto.getEmail() + "Password: " + credentialsDto.getPassword());
-
         UserDto userDto = userService.login(credentialsDto);
-        userDto.setToken(userAuthenticationProvider.createToken(userDto));
+        if (userDto == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
 
-        System.out.println("Username:" + credentialsDto.getEmail() + "Password: " + credentialsDto.getPassword());
-        System.out.println("Username:" + userDto.getEmail() + "Password: " + userDto.getPassword());
+        userDto.setToken(userAuthenticationProvider.createToken(userDto));
 
         return ResponseEntity.ok(userDto);
     }
 
+    /**
+     * Handles user registration.
+     *
+     * @param user The DTO containing user registration data.
+     * @return ResponseEntity containing the created user DTO along with an authentication token.
+     */
     @PostMapping("/register")
     public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto user) {
         UserDto createdUser = userService.register(user);
+        if (createdUser == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
         createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
-        System.out.println("Username:" + user.getEmail() + "Password: " + user.getPassword());
-        System.out.println("Username:" + createdUser.getEmail() + "Password: " + createdUser.getPassword());
+
         return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
     }
 }

@@ -19,6 +19,9 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 
+/**
+ * Provider class for user authentication functionality using JWT.
+ */
 @RequiredArgsConstructor
 @Component
 public class UserAuthenticationProvider {
@@ -28,12 +31,21 @@ public class UserAuthenticationProvider {
 
     private final UserService userService;
 
+    /**
+     * Initializes the secret key by encoding it with Base64.
+     */
     @PostConstruct
     protected void init() {
         // this is to avoid having the raw secret key available in the JVM
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    /**
+     * Creates a JWT token for the given user.
+     *
+     * @param user The user DTO for whom the token is created.
+     * @return The JWT token as a string.
+     */
     public String createToken(UserDto user) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + 3600000); // 1 hour
@@ -50,6 +62,12 @@ public class UserAuthenticationProvider {
                 .sign(algorithm);
     }
 
+    /**
+     * Validates a JWT token and returns an authentication object.
+     *
+     * @param token The JWT token to validate.
+     * @return The authentication object.
+     */
     public Authentication validateToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 
@@ -67,6 +85,12 @@ public class UserAuthenticationProvider {
         return new UsernamePasswordAuthenticationToken(user, null, Collections.emptyList());
     }
 
+    /**
+     * Validates a JWT token strongly by querying the user service and returns an authentication object.
+     *
+     * @param token The JWT token to validate.
+     * @return The authentication object.
+     */
     public Authentication validateTokenStrongly(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
 

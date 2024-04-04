@@ -9,14 +9,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Data Transfer Object (DTO) representing a new account.
+ * Data Transfer Object (DTO) representing transaction credentials.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class NewAccountDto {
-    private String accountName;
-    private AccountType accountType;
-    private Integer userId;
+public class TransactionDto {
+    private Integer accountId;
+    private double amount;
 }

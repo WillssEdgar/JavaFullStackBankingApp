@@ -14,6 +14,9 @@ import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
+/**
+ * Configuration class for security settings.
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -23,7 +26,13 @@ public class SecurityConfiguration {
     private final UserAuthenticationEntryPoint userAuthenticationEntryPoint;
 
 
-
+    /**
+     * Configures security filters and policies.
+     *
+     * @param http The HttpSecurity object to configure.
+     * @return SecurityFilterChain object representing the configured security filter chain.
+     * @throws Exception If an error occurs during configuration.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
