@@ -1,0 +1,402 @@
+{
+	"info": {
+		"_postman_id": "fe7ad8b2-d638-4f86-b2dc-b754610b7fc3",
+		"name": "WSEBanking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33399739"
+	},
+	"item": [
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Deposit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiZmlyc3ROYW1lIjoiam9obiIsImxhc3ROYW1lIjoiZG9lIiwiZXhwIjoxNzExNjQzNDQ1LCJpYXQiOjE3MTE2Mzk4NDUsInVzZXJJZCI6MywidXNlcm5hbWUiOiJqb2huIn0.odU8qZoFYBlwhGjuKqDlbAwJz4e-e9T2gIbbsRL8DR8",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiZmlyc3ROYW1lIjoiam9obiIsImxhc3ROYW1lIjoiZG9lIiwiZXhwIjoxNzEwOTc0NzAzLCJpYXQiOjE3MTA5NzExMDMsInVzZXJJZCI6MywidXNlcm5hbWUiOiJqb2huIn0.FgbhknjW4h9MApQFvfA2G5UTKpJpmqo2MP--OZ4k9l0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 22,\n    \"amount\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/accounts/transactions/deposit",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"transactions",
+								"deposit"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								},
+								{
+									"key": "depositAmount",
+									"value": "20",
+									"disabled": true
+								},
+								{
+									"key": "accountId",
+									"value": "22",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Withdrawal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3aWxsc2VkZ2FyIiwiZmlyc3ROYW1lIjoiV2lsbHMiLCJsYXN0TmFtZSI6IkVkZ2FyIiwiZXhwIjoxNzEyMjc1MDgzLCJpYXQiOjE3MTIyNzE0ODMsInVzZXJJZCI6NSwidXNlcm5hbWUiOiJ3aWxsc2VkZ2FyIn0.wdzjUZR38zWVWSgwippJSJ2jjuv8xeNARDs8GkaAqLw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": \"22\",\n    \"amount\": 30.32\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/accounts/transactions/withdrawal",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"transactions",
+								"withdrawal"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transfer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3aWxsc2VkZ2FyIiwiZmlyc3ROYW1lIjoiV2lsbHMiLCJsYXN0TmFtZSI6IkVkZ2FyIiwiZXhwIjoxNzEyMjY4MDY1LCJpYXQiOjE3MTIyNjQ0NjUsInVzZXJJZCI6NSwidXNlcm5hbWUiOiJ3aWxsc2VkZ2FyIn0.z4Tpd8j4eT4agFSf7qY3scvF5gBsOGK7HqjkL6_eQAo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fromAccount\": \"22274388\",\n    \"toAccount\": \"91498636\",\n    \"amount\": 400.00,\n    \"userId\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/accounts/transactions/transfer",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"transactions",
+								"transfer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Account",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ3aWxsc2VkZ2FyIiwiZmlyc3ROYW1lIjoiV2lsbHMiLCJsYXN0TmFtZSI6IkVkZ2FyIiwiZXhwIjoxNzEyMjY4MDY1LCJpYXQiOjE3MTIyNjQ0NjUsInVzZXJJZCI6NSwidXNlcm5hbWUiOiJ3aWxsc2VkZ2FyIn0.z4Tpd8j4eT4agFSf7qY3scvF5gBsOGK7HqjkL6_eQAo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountName\": \"Wills Example Account\",\n    \"accountType\": \"CHECKINGS\",\n    \"userId\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/accounts/addNewAccount",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"addNewAccount"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"willsedgar@gmail.com\",\n    \"password\": \"Willsedgar1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/login",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "willsedgar@gmail.com",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "Willsedgar1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"Ana\",\n    \"lastName\": \"Edgar\",\n    \"username\": \"anaedgar\",\n    \"role\": \"USER\",\n    \"password\": \"Anaedgar1\",\n    \"email\": \"anaedgar@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/register",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fetching",
+			"item": [
+				{
+					"name": "Fetch Transactions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiZmlyc3ROYW1lIjoiam9obiIsImxhc3ROYW1lIjoiZG9lIiwiZXhwIjoxNzEyMjUwODg2LCJpYXQiOjE3MTIyNDcyODYsInVzZXJJZCI6MywidXNlcm5hbWUiOiJqb2huIn0.7C4CkIBwBUT_1ahFd5-15tsd5XmrfA697-9pfcdItHw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/transactions/getTransactions?accountId=22",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"transactions",
+								"getTransactions"
+							],
+							"query": [
+								{
+									"key": "accountId",
+									"value": "22"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Account Info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiZmlyc3ROYW1lIjoiam9obiIsImxhc3ROYW1lIjoiZG9lIiwiZXhwIjoxNzEyMjY3Mjk3LCJpYXQiOjE3MTIyNjM2OTcsInVzZXJJZCI6MywidXNlcm5hbWUiOiJqb2huIn0.9IO8cs7qozfA8XGIzo8oLfvSM7cy0Df710dYPdUKF7c",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/accounts/account?userId=5&accountNumber=22274388",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"accounts",
+								"account"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								},
+								{
+									"key": "accountNumber",
+									"value": "22274388"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Accounts",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqb2huIiwiZmlyc3ROYW1lIjoiam9obiIsImxhc3ROYW1lIjoiZG9lIiwiZXhwIjoxNzEyMjU3NjQzLCJpYXQiOjE3MTIyNTQwNDMsInVzZXJJZCI6MywidXNlcm5hbWUiOiJqb2huIn0.jeEpgc38AutQCl6yhMooc2e-XvMnqdTIR0DQpX2vGjw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/users/accounts?userId=5",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"accounts"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

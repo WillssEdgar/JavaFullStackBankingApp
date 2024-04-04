@@ -83,7 +83,6 @@ public class AccountController {
     @PostMapping("/accounts/transactions/withdrawal")
     public ResponseEntity<String> withdrawal(@RequestBody TransactionDto transactionDto){
 
-
         AccountDto accountDto = accountService.withdrawal(transactionDto);
 
         if (accountDto == null) {
