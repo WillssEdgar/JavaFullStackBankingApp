@@ -32,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private final AccountMapper accountMapper;
@@ -86,7 +85,7 @@ public class UserService {
     }
 
     /**
-     * Finds a user by username.
+     * Finds a user by username
      *
      * @param username The username of the user to find.
      * @return The DTO representing the found user.
