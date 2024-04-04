@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: action/checkout@v3
+      uses: actions/checkout@v4.1.2
 
     - name: Navigate to the Spring Boot project directory
       run: cd Backend/WSEBanking
