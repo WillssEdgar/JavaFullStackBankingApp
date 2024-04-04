@@ -18,6 +18,8 @@ jobs:
       with:
         distribution: 'adopt'
         java-version: '21'
+      env: 
+        NODE_VERSION: 20.x
         
   
     - name: Build with Maven
