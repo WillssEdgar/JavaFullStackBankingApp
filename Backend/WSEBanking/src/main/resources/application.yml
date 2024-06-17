@@ -1,23 +1,28 @@
-# spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
-# spring.jpa.hibernate.ddl-auto=none
-# spring.jpa.properties.hibernate.format_sql=true
-# spring.datasource.url=jdbc:postgresql://localhost:5431/wsebanking
-# spring.datasource.db.username=willsedgar
-# spring.datasource.password=2123
-
-# spring.sql.init.mode=always
-# spring.sql.init.schema-locations=classpath:/data.sql
-# spring.sql.init.continue-on-error=true
+# security.jwt.token.secret-key: my-secret-key
+#
+# spring:
+#   datasource:
+#     driver-class-name: org.postgresql.Driver
+#     url: jdbc:postgresql://localhost:5431/wsebanking
+#     username: willsedgar
+#     password: 2123
+#   jpa:
+#     database-platform: org.hibernate.dialect.PostgreSQLDialect
+#     hibernate:
+#       ddl-auto: validate
+#
 
 security.jwt.token.secret-key: my-secret-key
 
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5431/wsebanking
-    username: willsedgar
-    password: 2123
+    url: jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres  # Supabase database URL
+    username: postgres.ixpgspabkcfkjlewsetu  # Supabase username
+    password: vkfaU6wLrKJNa3 # Supabase password
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
+
+# jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?user=postgres.ixpgspabkcfkjlewsetu&password=[YOUR-PASSWORD]

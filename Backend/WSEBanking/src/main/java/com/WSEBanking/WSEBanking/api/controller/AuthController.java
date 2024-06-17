@@ -21,41 +21,43 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RestController
 public class AuthController {
-    private final UserService userService;
-    private final UserAuthenticationProvider userAuthenticationProvider;
+  private final UserService userService;
+  private final UserAuthenticationProvider userAuthenticationProvider;
 
-    /**
-     * Handles user login.
-     *
-     * @param credentialsDto The DTO containing user credentials.
-     * @return ResponseEntity containing the authenticated user DTO along with an authentication token.
-     */
-    @PostMapping("/login")
-    public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
-        UserDto userDto = userService.login(credentialsDto);
-        if (userDto == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        userDto.setToken(userAuthenticationProvider.createToken(userDto));
-
-        return ResponseEntity.ok(userDto);
+  /**
+   * Handles user login.
+   *
+   * @param credentialsDto The DTO containing user credentials.
+   * @return ResponseEntity containing the authenticated user DTO along with an
+   *         authentication token.
+   */
+  @PostMapping("/login")
+  public ResponseEntity<UserDto> login(@RequestBody @Valid CredentialsDto credentialsDto) {
+    UserDto userDto = userService.login(credentialsDto);
+    if (userDto == null) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
 
-    /**
-     * Handles user registration.
-     *
-     * @param user The DTO containing user registration data.
-     * @return ResponseEntity containing the created user DTO along with an authentication token.
-     */
-    @PostMapping("/register")
-    public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto user) {
-        UserDto createdUser = userService.register(user);
-        if (createdUser == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-        createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
+    userDto.setToken(userAuthenticationProvider.createToken(userDto));
 
-        return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
+    return ResponseEntity.ok(userDto);
+  }
+
+  /**
+   * Handles user registration.
+   *
+   * @param user The DTO containing user registration data.
+   * @return ResponseEntity containing the created user DTO along with an
+   *         authentication token.
+   */
+  @PostMapping("/register")
+  public ResponseEntity<UserDto> register(@RequestBody @Valid SignUpDto user) {
+    UserDto createdUser = userService.register(user);
+    if (createdUser == null) {
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
+    createdUser.setToken(userAuthenticationProvider.createToken(createdUser));
+
+    return ResponseEntity.created(URI.create("/users/" + createdUser.getId())).body(createdUser);
+  }
 }
